@@ -1,6 +1,6 @@
 package testapp.sliubetskyi.location.core.presenters;
 
-import testapp.sliubetskyi.location.core.ClientContext;
+import testapp.sliubetskyi.location.core.state.ClientContext;
 import testapp.sliubetskyi.location.core.IView;
 
 public class Presenter<V extends IView> {

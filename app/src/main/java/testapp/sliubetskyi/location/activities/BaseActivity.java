@@ -3,10 +3,9 @@ package testapp.sliubetskyi.location.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 
 import testapp.sliubetskyi.location.App;
-import testapp.sliubetskyi.location.core.ClientContext;
+import testapp.sliubetskyi.location.core.state.ClientContext;
 import testapp.sliubetskyi.location.core.presenters.Presenter;
 import testapp.sliubetskyi.location.ui.BaseView;
 
@@ -17,7 +16,7 @@ public abstract class BaseActivity<P extends Presenter<V>, V extends BaseView> e
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(presenter == null)
+        if (presenter == null)
             presenter = createPresenter();
     }
 

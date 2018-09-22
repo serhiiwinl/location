@@ -4,27 +4,27 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.core.presenters.MapsActivityPresenter;
+import testapp.sliubetskyi.location.model.data.LocationData;
 import testapp.sliubetskyi.location.ui.MapsActivityView;
 
 public class MapsActivity extends BaseActivity<MapsActivityPresenter, MapsActivityView> implements
         OnMapReadyCallback, MapsActivityView {
 
-    private GoogleMap mMap;
+    private GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null)
             mapFragment.getMapAsync(this);
     }
@@ -45,15 +45,15 @@ public class MapsActivity extends BaseActivity<MapsActivityPresenter, MapsActivi
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        presenter.openMapInCoordinates();
+        map = googleMap;
+        presenter.openMap();
     }
 
     @Override
-    public void openMapOnCoordinates(String title, int lat, int lng) {
+    public void openMapOnCoordinates(String title, LocationData locationData) {
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(lat, lng);
-        mMap.addMarker(new MarkerOptions().position(sydney).title(title));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng coordinates = new LatLng(locationData.lat, locationData.lng);
+        map.addMarker(new MarkerOptions().position(coordinates).title(title));
+        map.moveCamera(CameraUpdateFactory.newLatLng(coordinates));
     }
 }
