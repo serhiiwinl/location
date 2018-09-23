@@ -1,0 +1,133 @@
+package testapp.sliubetskyi.location.android.components;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Looper;
+import android.support.v4.content.ContextCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import testapp.sliubetskyi.location.core.model.modules.ILocationManager;
+import testapp.sliubetskyi.location.core.model.data.LocationData;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
+public class LocationManager implements ILocationManager {
+
+    private final Context context;
+    private LocationRequest locationRequest;
+    private long UPDATE_INTERVAL = 10000;  /* 10 secs */
+    private long FASTEST_INTERVAL = 5000; /* 5 secs */
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback locationCallback;
+    private final List<LocationUpdatesListener> listeners = new ArrayList<>();
+    private LocationData locationData;
+
+    public LocationManager(final Context context, LocationData locationData) {
+        this.context = context;
+        this.locationData = locationData;
+    }
+
+    /**
+     * Starts to track user location if it is possible.
+     */
+    private void startLocationUpdates() {
+        //Get current location settings
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        locationRequest = new LocationRequest();
+        builder.addLocationRequest(locationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
+
+        SettingsClient settingsClient = LocationServices.getSettingsClient(context);
+        Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(locationSettingsRequest);
+        task.addOnSuccessListener(locationSettingsResponse -> {
+            int accessFinePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+            if (accessFinePermission == PackageManager.PERMISSION_GRANTED) {
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                locationRequest.setInterval(UPDATE_INTERVAL);
+                locationRequest.setFastestInterval(FASTEST_INTERVAL);
+                fusedLocationProviderClient = getFusedLocationProviderClient(context);
+                locationCallback = new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        Location lastLocation = locationResult.getLastLocation();
+                        locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude());
+                        for (LocationUpdatesListener listener : listeners)
+                            listener.onLocationChanged(locationData);
+                    }
+                };
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            }
+        });
+        task.addOnFailureListener(e -> {
+            for (LocationUpdatesListener listener : listeners)
+                listener.onResolvableException(e);
+        });
+    }
+
+    /**
+     * Stops to track user location.
+     */
+    private void stopLocationUpdates() {
+        if (fusedLocationProviderClient != null) {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+            fusedLocationProviderClient = null;
+        }
+    }
+
+    @Override
+    public void addLocationUpdatesListener(LocationUpdatesListener locationUpdatesListener) {
+        synchronized (listeners) {
+            listeners.add(locationUpdatesListener);
+            if (fusedLocationProviderClient == null)
+                startLocationUpdates();
+        }
+    }
+
+    @Override
+    public void removeLocationUpdatesListener(LocationUpdatesListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+            if (listeners.isEmpty()) {
+                stopLocationUpdates();
+            }
+        }
+    }
+
+    @Override
+    public LocationData getCurrentLocation() {
+        return locationData;
+    }
+
+    /**
+     * Impl it if your wish to receive user location.
+     */
+    public interface LocationUpdatesListener {
+        /**
+         * Notify listener when new location available.
+         * @param location current user location
+         */
+        void onLocationChanged(LocationData location);
+
+        /**
+         * You can handle this {@link Exception} only in {@link android.app.Activity} listener.
+         * @param resolvable exception
+         */
+        default void onResolvableException(Exception resolvable) {
+
+        }
+    }
+}

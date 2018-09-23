@@ -1,7 +1,8 @@
-package testapp.sliubetskyi.location.core.state;
+package testapp.sliubetskyi.location.core.model;
 
-import testapp.sliubetskyi.location.core.data.IPersistentData;
-import testapp.sliubetskyi.location.model.data.LocationData;
+import testapp.sliubetskyi.location.core.model.data.LocationData;
+import testapp.sliubetskyi.location.core.model.modules.IAppState;
+import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
 
 /**
  * Holds app state.
@@ -25,16 +26,5 @@ public class AppState implements IAppState {
     @Override
     public void setLocationPermissionAllowed(boolean locationPermissionAllowed) {
         this.isLocationPermissionAllowed = locationPermissionAllowed;
-    }
-
-    @Override
-    public LocationData getLocationData() {
-        return locationData;
-    }
-
-    @Override
-    public void setLocationData(LocationData locationData) {
-        this.locationData = locationData;
-        persistentData.setUserLocation(locationData);
     }
 }

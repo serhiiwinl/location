@@ -1,4 +1,4 @@
-package testapp.sliubetskyi.location.activities;
+package testapp.sliubetskyi.location.android.activities;
 
 import android.os.Bundle;
 
@@ -10,12 +10,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import testapp.sliubetskyi.location.R;
-import testapp.sliubetskyi.location.core.presenters.MapsActivityPresenter;
-import testapp.sliubetskyi.location.model.data.LocationData;
-import testapp.sliubetskyi.location.ui.MapsActivityView;
+import testapp.sliubetskyi.location.core.presenters.MapsPresenter;
+import testapp.sliubetskyi.location.core.model.data.LocationData;
+import testapp.sliubetskyi.location.core.ui.MapsView;
 
-public class MapsActivity extends BaseActivity<MapsActivityPresenter, MapsActivityView> implements
-        OnMapReadyCallback, MapsActivityView {
+public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implements
+        OnMapReadyCallback, MapsView {
 
     private GoogleMap map;
 
@@ -30,8 +30,8 @@ public class MapsActivity extends BaseActivity<MapsActivityPresenter, MapsActivi
     }
 
     @Override
-    MapsActivityPresenter createPresenter() {
-        return new MapsActivityPresenter(getClientContext());
+    MapsPresenter createPresenter() {
+        return new MapsPresenter(getClientContext());
     }
 
     /**
