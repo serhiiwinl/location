@@ -11,10 +11,10 @@ import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
  * Presenter is needed for all views interested in location updates.
  * @param <V> {@link testapp.sliubetskyi.location.core.ui.IView} sub type.
  */
-public abstract class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
+public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
         LocationManager.LocationUpdatesListener {
 
-    BaseLocationUpdaterPresenter(ClientContext clientContext) {
+    public BaseLocationUpdaterPresenter(ClientContext clientContext) {
         super(clientContext);
     }
 
