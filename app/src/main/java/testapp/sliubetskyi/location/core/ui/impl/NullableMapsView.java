@@ -22,7 +22,7 @@ public class NullableMapsView implements MapsView {
     }
 
     @Override
-    public void updateCoordinatesOnMap(LocationData location) {
+    public void onLocationChanged(LocationData location) {
 
     }
 }

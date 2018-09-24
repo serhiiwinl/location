@@ -46,7 +46,7 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
 
     @Override
     public void onLocationChanged(LocationData location) {
-        System.out.println(location);
+        getView().onLocationChanged(location);
     }
 
     @Override

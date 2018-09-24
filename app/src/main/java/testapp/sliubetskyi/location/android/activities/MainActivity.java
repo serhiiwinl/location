@@ -7,8 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 
 import testapp.sliubetskyi.location.R;
+import testapp.sliubetskyi.location.android.services.LocationTrackerService;
+import testapp.sliubetskyi.location.core.model.maps.LocationData;
 import testapp.sliubetskyi.location.core.presenters.MainPresenter;
 import testapp.sliubetskyi.location.core.ui.MainView;
 
@@ -16,6 +19,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
         MainView, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private CheckBox allowLocationTrackingCheckBox;
+    private EditText distanceInputField;
 
     @Override
     MainPresenter createPresenter() {
@@ -26,17 +30,22 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button = findViewById(R.id.open_maps_button);
+        Button button = findViewById(R.id.show_current_location);
+        Button distanceTracker = findViewById(R.id.start_distance_tracking);
         button.setOnClickListener(this);
+        distanceTracker.setOnClickListener(this);
         allowLocationTrackingCheckBox = findViewById(R.id.allow_location_tracking_checkbox);
+        distanceInputField = findViewById(R.id.distance_input_field);
         allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.open_maps_button)
+        if (id == R.id.show_current_location)
             presenter.openMapsActivity();
+        else if (id == R.id.start_distance_tracking)
+            presenter.startDistanceTracking(Long.valueOf(distanceInputField.getText().toString()));
     }
 
     @Override
@@ -61,6 +70,12 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
     }
 
     @Override
+    public void openDistanceTrackingService() {
+        Intent intent = new Intent(this, LocationTrackerService.class);
+        startService(intent);
+    }
+
+    @Override
     protected void permissionGranted() {
         super.permissionGranted();
         presenter.enableLocationTracking(true);
@@ -76,5 +91,10 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
     protected void permissionDenied() {
         super.permissionDenied();
         presenter.enableLocationTracking(false);
+    }
+
+    @Override
+    public void onLocationChanged(LocationData location) {
+
     }
 }

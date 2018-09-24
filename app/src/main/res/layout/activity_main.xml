@@ -1,27 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/open_maps_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorPrimaryDark"
-        android:text="@string/open_maps"
-        android:visibility="visible" />
 
     <CheckBox
         android:id="@+id/allow_location_tracking_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/open_maps_button"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:checked="false"
         android:text="@string/allow_location_tracking" />
+
+    <Button
+        android:id="@+id/show_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/allow_location_tracking_checkbox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/show_current_location" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/distance_input_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/show_current_location"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:hint="@string/input_distance_field_hint"
+        android:textAlignment="center"
+        android:inputType="number"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/start_distance_tracking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/distance_input_field"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/start_distance_tracking" />
 
 </RelativeLayout>

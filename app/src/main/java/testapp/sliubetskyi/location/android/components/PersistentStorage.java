@@ -20,6 +20,8 @@ public class PersistentStorage implements IPersistentData {
     private static final String USER_ALLOWED_TRACKING_KEY = "user allowed tracking";
     private static final String USER_BLOCK_PERMISSIONS_FOREVER_KEY = "user block permissions forever";
     private static final String USER_CAMERA_ZOOM_LEVEL = "user camera zoom level";
+    private static final String USER_TRACKED_DISTANCE_KEY = "user tracked distance key";
+    private static final String USER_TARGET_DISTANCE_KEY = "user target distance key";
 
     //Sidney coordinates
     private static final int DEFAULT_USER_LAT_COORDINATE = -34;
@@ -69,6 +71,26 @@ public class PersistentStorage implements IPersistentData {
     @Override
     public void setPermissionsBlockedForever(boolean permissionsBlockedForever) {
         sharedPref.edit().putBoolean(USER_BLOCK_PERMISSIONS_FOREVER_KEY, permissionsBlockedForever).apply();
+    }
+
+    @Override
+    public void setTrackedDistance(float trackedDistance) {
+        sharedPref.edit().putFloat(USER_TRACKED_DISTANCE_KEY, trackedDistance).apply();
+    }
+
+    @Override
+    public float getTrackedDistance() {
+        return sharedPref.getFloat(USER_TRACKED_DISTANCE_KEY, 0);
+    }
+
+    @Override
+    public void setTargetDistance(long targetDistance) {
+        sharedPref.edit().putLong(USER_TARGET_DISTANCE_KEY, targetDistance).apply();
+    }
+
+    @Override
+    public long getTargetDistance() {
+        return sharedPref.getLong(USER_TARGET_DISTANCE_KEY, 0);
     }
 
     @Override

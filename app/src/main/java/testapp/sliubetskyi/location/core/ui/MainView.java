@@ -9,4 +9,6 @@ public interface MainView extends ILocationUpdaterView {
      * @param isPermissionsBlocked true if user pressed "never ask" button on permission dialog.
      */
     void setUpTrackingSettings(boolean isTrackingAllowed, boolean isPermissionsBlocked);
+
+    void openDistanceTrackingService();
 }

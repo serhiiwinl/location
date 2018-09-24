@@ -39,4 +39,14 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<MainView> {
         else
             stopLocationTracking();
     }
+
+    /**
+     * Start foreground service for user distance tracking.
+     * @param distance user target distance in meters.
+     */
+    public void startDistanceTracking(long distance) {
+        getPersistentStorage().setTargetDistance(distance);
+        getView().openDistanceTrackingService();
+
+    }
 }

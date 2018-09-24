@@ -19,11 +19,6 @@ public class MapsPresenter extends BaseLocationUpdaterPresenter<MapsView> {
     }
 
     @Override
-    public void onLocationChanged(LocationData location) {
-        getView().updateCoordinatesOnMap(location);
-    }
-
-    @Override
     public MapsView getView() {
         MapsView view = super.getView();
         if(view == null)
