@@ -1,23 +1,25 @@
 package testapp.sliubetskyi.location.core.presenters;
 
+import android.support.annotation.NonNull;
+
 import testapp.sliubetskyi.location.android.components.LocationManager;
 import testapp.sliubetskyi.location.core.model.ClientContext;
-import testapp.sliubetskyi.location.core.model.data.LocationData;
+import testapp.sliubetskyi.location.core.model.maps.LocationData;
 import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
 
 /**
  * Presenter is needed for all views interested in location updates.
  * @param <V> {@link testapp.sliubetskyi.location.core.ui.IView} sub type.
  */
-public abstract class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
+public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
         LocationManager.LocationUpdatesListener {
 
-    BaseLocationUpdaterPresenter(ClientContext clientContext) {
+    public BaseLocationUpdaterPresenter(ClientContext clientContext) {
         super(clientContext);
     }
 
     @Override
-    public void onViewBound(V view) {
+    public void onViewBound(@NonNull V view) {
         super.onViewBound(view);
         startLocationTracking();
     }
@@ -30,7 +32,7 @@ public abstract class BaseLocationUpdaterPresenter<V extends ILocationUpdaterVie
 
     void startLocationTracking() {
         if (clientContext.getPersistentStorage().isUserAllowedTracking()) {
-            if (clientContext.getPermissions().isLocationPermissionsAllowed())
+            if (clientContext.getPermissionsManager().isLocationPermissionsAllowed())
                 clientContext.getLocationManager().addLocationUpdatesListener(this);
             else
                 getView().askLocationPermissions();

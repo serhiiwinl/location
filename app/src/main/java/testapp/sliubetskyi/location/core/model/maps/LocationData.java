@@ -1,4 +1,4 @@
-package testapp.sliubetskyi.location.core.model.data;
+package testapp.sliubetskyi.location.core.model.maps;
 
 /**
  * Holds user location coordinates.

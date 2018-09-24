@@ -15,7 +15,7 @@ import testapp.sliubetskyi.location.core.ui.MainView;
 public class MainActivity extends BaseActivity<MainPresenter, MainView> implements
         MainView, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    private CheckBox allowLocationTracking;
+    private CheckBox allowLocationTrackingCheckBox;
 
     @Override
     MainPresenter createPresenter() {
@@ -28,8 +28,8 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
         setContentView(R.layout.activity_main);
         Button button = findViewById(R.id.open_maps_button);
         button.setOnClickListener(this);
-        allowLocationTracking = findViewById(R.id.allow_location_tracking_checkbox);
-        allowLocationTracking.setOnCheckedChangeListener(this);
+        allowLocationTrackingCheckBox = findViewById(R.id.allow_location_tracking_checkbox);
+        allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -46,7 +46,6 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
     }
 
     //MainView impl block
-
     @Override
     public void openMapsActivity() {
         Intent intent = new Intent(this, MapsActivity.class);
@@ -54,7 +53,28 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
     }
 
     @Override
-    public void setUpTrackingSettings(boolean isTrackingAllowed) {
-        allowLocationTracking.setChecked(isTrackingAllowed);
+    public void setUpTrackingSettings(boolean isTrackingAllowed, boolean isPermissionsBlockedForever) {
+        allowLocationTrackingCheckBox.setOnCheckedChangeListener(null);
+        allowLocationTrackingCheckBox.setEnabled(!isPermissionsBlockedForever);
+        allowLocationTrackingCheckBox.setChecked(isTrackingAllowed);
+        allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    protected void permissionGranted() {
+        super.permissionGranted();
+        presenter.enableLocationTracking(true);
+    }
+
+    @Override
+    protected void permissionDeniedNeverAsk() {
+        super.permissionDeniedNeverAsk();
+        presenter.enableLocationTracking(false);
+    }
+
+    @Override
+    protected void permissionDenied() {
+        super.permissionDenied();
+        presenter.enableLocationTracking(false);
     }
 }

@@ -1,6 +1,6 @@
 package testapp.sliubetskyi.location.core.model.modules;
 
-public interface IPermissions {
+public interface IPermissionsManager {
     boolean isLocationPermissionsAllowed();
     boolean isPermissionAvailable(String permission);
 }

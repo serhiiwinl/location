@@ -1,7 +1,7 @@
 package testapp.sliubetskyi.location.core.model.modules;
 
 import testapp.sliubetskyi.location.android.components.LocationManager;
-import testapp.sliubetskyi.location.core.model.data.LocationData;
+import testapp.sliubetskyi.location.core.model.maps.LocationData;
 
 public interface ILocationManager {
     void addLocationUpdatesListener(LocationManager.LocationUpdatesListener listener);

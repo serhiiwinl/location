@@ -1,7 +1,8 @@
 package testapp.sliubetskyi.location.core.model;
 
-import testapp.sliubetskyi.location.core.model.data.LocationData;
+import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.core.model.modules.IAppState;
+import testapp.sliubetskyi.location.core.model.modules.IPermissionsManager;
 import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
 
 /**
@@ -9,22 +10,21 @@ import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
  */
 public class AppState implements IAppState {
 
-    private LocationData locationData;
+    private IPermissionsManager permissions;
     private IPersistentData persistentData;
-    private boolean isLocationPermissionAllowed;
 
-    public AppState(IPersistentData persistentData) {
-        this.persistentData = persistentData;
-        this.locationData = persistentData.getUserLocation();
+    AppState(App app, IPersistentData persistentStorage, IPermissionsManager permissions) {
+        this.persistentData = persistentStorage;
+        this.permissions = permissions;
     }
 
     @Override
-    public boolean isLocationPermissionAllowed() {
-        return false;
+    public boolean isLocationTrackingAllowed() {
+        return persistentData.isUserAllowedTracking() && permissions.isLocationPermissionsAllowed();
     }
 
     @Override
-    public void setLocationPermissionAllowed(boolean locationPermissionAllowed) {
-        this.isLocationPermissionAllowed = locationPermissionAllowed;
+    public boolean isPermissionsBlockedForever() {
+        return persistentData.isPermissionsBlockedForever() && !permissions.isLocationPermissionsAllowed();
     }
 }

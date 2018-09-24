@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import testapp.sliubetskyi.location.core.model.modules.ILocationManager;
-import testapp.sliubetskyi.location.core.model.data.LocationData;
+import testapp.sliubetskyi.location.core.model.maps.LocationData;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 

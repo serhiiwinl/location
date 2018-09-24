@@ -2,31 +2,43 @@ package testapp.sliubetskyi.location.android.activities;
 
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import testapp.sliubetskyi.location.R;
+import testapp.sliubetskyi.location.core.model.StringsIds;
+import testapp.sliubetskyi.location.core.model.maps.LocationData;
 import testapp.sliubetskyi.location.core.presenters.MapsPresenter;
-import testapp.sliubetskyi.location.core.model.data.LocationData;
 import testapp.sliubetskyi.location.core.ui.MapsView;
 
-public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implements
-        OnMapReadyCallback, MapsView {
+public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implements OnMapReadyCallback, MapsView {
 
     private GoogleMap map;
+    private Marker marker;
+    private String defaultMarkerTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        defaultMarkerTitle = getString(R.string.current_unknown);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null)
             mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    protected void onPause() {
+        if (map != null)
+            presenter.saveCameraParams(map.getCameraPosition().zoom);
+        super.onPause();
     }
 
     @Override
@@ -50,10 +62,37 @@ public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implemen
     }
 
     @Override
-    public void openMapOnCoordinates(String title, LocationData locationData) {
+    public void openMapWithParams(StringsIds markerName, LocationData locationData, float cameraZoom) {
+        if (map == null)
+            return;
         // Add a marker in Sydney and move the camera
         LatLng coordinates = new LatLng(locationData.lat, locationData.lng);
-        map.addMarker(new MarkerOptions().position(coordinates).title(title));
-        map.moveCamera(CameraUpdateFactory.newLatLng(coordinates));
+        updateMarker(getString(markerName), coordinates);
+
+        if (cameraZoom < 0)
+            cameraZoom = map.getCameraPosition().zoom;
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, cameraZoom);
+        map.moveCamera(cameraUpdate);
+    }
+
+    @Override
+    public void updateCoordinatesOnMap(LocationData locationData) {
+        if (map == null)
+            return;
+        LatLng coordinates = new LatLng(locationData.lat, locationData.lng);
+        updateMarker(defaultMarkerTitle, coordinates);
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, map.getCameraPosition().zoom);
+        map.moveCamera(cameraUpdate);
+    }
+
+    private void updateMarker(String markerTitle, LatLng coordinates) {
+        if (marker != null) {
+            marker.setTitle(markerTitle);
+            marker.setPosition(coordinates);
+        } else {
+            marker = map.addMarker(new MarkerOptions().position(coordinates).title(markerTitle));
+        }
     }
 }
