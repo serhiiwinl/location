@@ -4,4 +4,11 @@
     <string name="title_activity_main">Main Activity</string>
     <string name="open_maps">Open maps</string>
     <string name="allow_location_tracking">Allow location tracking</string>
+
+    <string name="location_unknown">Your location is unknown</string>
+    <string name="current_unknown">Your current location</string>
+
+    <string name="permission_granted">Permission granted!</string>
+    <string name="permission_denied">Permission denied! App main functions are restricted.</string>
+
 </resources>

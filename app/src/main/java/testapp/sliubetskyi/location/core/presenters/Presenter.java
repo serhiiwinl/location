@@ -3,6 +3,8 @@ package testapp.sliubetskyi.location.core.presenters;
 import android.support.annotation.CallSuper;
 
 import testapp.sliubetskyi.location.core.model.ClientContext;
+import testapp.sliubetskyi.location.core.model.modules.IAppState;
+import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
 import testapp.sliubetskyi.location.core.ui.IView;
 
 public class Presenter<V extends IView> {
@@ -26,5 +28,13 @@ public class Presenter<V extends IView> {
 
     public V getView() {
         return view;
+    }
+
+    IPersistentData getPersistentStorage() {
+        return clientContext.getPersistentStorage();
+    }
+
+    IAppState getAppState() {
+        return clientContext.getAppState();
     }
 }

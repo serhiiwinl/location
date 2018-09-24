@@ -9,7 +9,7 @@ public class NullableMainView implements MainView {
     }
 
     @Override
-    public void setUpTrackingSettings(boolean isTrackingAllowed) {
+    public void setUpTrackingSettings(boolean isTrackingAllowed, boolean isPermissionsBlocked) {
 
     }
 

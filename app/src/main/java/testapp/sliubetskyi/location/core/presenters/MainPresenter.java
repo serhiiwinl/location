@@ -1,5 +1,7 @@
 package testapp.sliubetskyi.location.core.presenters;
 
+import android.support.annotation.NonNull;
+
 import testapp.sliubetskyi.location.core.model.ClientContext;
 import testapp.sliubetskyi.location.core.ui.MainView;
 import testapp.sliubetskyi.location.core.ui.impl.NullableMainView;
@@ -10,9 +12,9 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<MainView> {
     }
 
     @Override
-    public void onViewBound(MainView view) {
-        getView().setUpTrackingSettings(clientContext.getPersistentStorage().isUserAllowedTracking());
+    public void onViewBound(@NonNull MainView view) {
         super.onViewBound(view);
+        view.setUpTrackingSettings(getAppState().isLocationTrackingAllowed(), getAppState().isPermissionsBlockedForever());
     }
 
     @Override
@@ -29,7 +31,8 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<MainView> {
 
     public void enableLocationTracking(boolean isChecked) {
         //save to cash
-        clientContext.getPersistentStorage().setUserAllowedTracking(isChecked);
+        getPersistentStorage().setUserAllowedTracking(isChecked);
+        getView().setUpTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever());
         //start tracking if allowed
         if (isChecked)
             startLocationTracking();

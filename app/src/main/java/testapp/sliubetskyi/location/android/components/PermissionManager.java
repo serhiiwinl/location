@@ -11,15 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import testapp.sliubetskyi.location.core.model.modules.IPermissions;
+import testapp.sliubetskyi.location.core.model.modules.IPermissionsManager;
 
 /**
  * Encapsulates location permissions request and checking logic.
  */
 @SuppressWarnings("WeakerAccess")
-public class PermissionManager implements IPermissions {
+public class PermissionManager implements IPermissionsManager {
 
-    private static final int ALL_PERMISSIONS_REQUEST_CODE = 537;
+    public static final int ALL_PERMISSIONS_REQUEST_CODE = 537;
 
     Context context;
 
@@ -33,23 +33,21 @@ public class PermissionManager implements IPermissions {
 
     public static void askForRejectedPermissions(Activity activity) {
         String[] rejectedPermissions = getRejectedPermissions(activity);
-        if (rejectedPermissions.length > 0) {
+        if (rejectedPermissions.length > 0)
             ActivityCompat.requestPermissions(activity, rejectedPermissions, ALL_PERMISSIONS_REQUEST_CODE);
-        }
     }
 
     public static String[] getRejectedPermissions(Context context) {
         ArrayList<String> rejectedPermissions = new ArrayList<>();
         for (String permission : locationPermissions) {
-            if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
+            if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED)
                 rejectedPermissions.add(permission);
-            }
         }
         return  rejectedPermissions.toArray(new String[rejectedPermissions.size()]);
     }
 
     public static void askForPermission(Activity activity, String... permission) {
-        ActivityCompat.requestPermissions(activity, permission, 1);
+        ActivityCompat.requestPermissions(activity, permission, ALL_PERMISSIONS_REQUEST_CODE);
     }
 
     @Override
