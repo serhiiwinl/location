@@ -14,6 +14,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.io.Serializable;
+
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.services.LocationTrackerService;
 import testapp.sliubetskyi.location.core.presenters.MainPresenter;
@@ -30,6 +32,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private boolean isServiceBound;
     private LocationTrackerService locationTrackerService;
     private long targetDistance;
+
+    public static final String ENABLE_LOCATION_REQUEST = "enable_location_request";
 
     @Override
     public MainPresenter createPresenter() {
@@ -59,12 +63,40 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
             distanceInputField.setText(String.valueOf(targetDistance));
         else
             distanceInputField.setText("");
+
+        handleIntent(getIntent());
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent == null)
+            return;
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            Serializable serializable = extras.getSerializable(ENABLE_LOCATION_REQUEST);
+            if (serializable != null)
+                onResolvableException((Exception) serializable);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if (isServiceBound) {
+            unbindService(connection);
+            isServiceBound = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (connection != null) {
             unbindService(connection);
             isServiceBound = false;
         }
@@ -125,7 +157,6 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
             bindService(intent, connection, Context.BIND_AUTO_CREATE);
         }
     }
-
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection connection = new ServiceConnection() {

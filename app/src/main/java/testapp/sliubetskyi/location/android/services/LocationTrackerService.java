@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -86,6 +87,28 @@ public class LocationTrackerService extends BaseService<LocationUpdaterPresenter
         prevLocation = location;
     }
 
+    @Override
+    public void onResolvableException(Exception resolvable) {
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable(MainActivity.ENABLE_LOCATION_REQUEST, resolvable);
+//        PendingIntent pendingIntent = getPendingIntent(bundle);
+//        getNotificationHelper()
+//                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
+//                        R.drawable.notification_icon,
+//                        "location tracking not allowed without GPS or WI-FI, LTE",
+//                        pendingIntent, TARGET_ACHIEVED_NOTIFICATION_ID);
+    }
+
+    @Override
+    public void askLocationPermissions() {
+//        PendingIntent pendingIntent = getPendingIntent();
+//        getNotificationHelper()
+//                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
+//                        R.drawable.notification_icon,
+//                        "location tracking not allowed without permissions",
+//                        pendingIntent, TARGET_ACHIEVED_NOTIFICATION_ID);
+    }
+
     /**
      * Stops service at all if it is not bind.
      */
@@ -106,9 +129,15 @@ public class LocationTrackerService extends BaseService<LocationUpdaterPresenter
                 this, getPendingIntent(), targetDistance);
     }
 
-    private PendingIntent getPendingIntent() {
+    private PendingIntent getPendingIntent(Bundle bundle) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
+        if (bundle != null)
+            notificationIntent.putExtras(bundle);
         return PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    }
+
+    private PendingIntent getPendingIntent() {
+        return getPendingIntent(null);
     }
 
     @NonNull
