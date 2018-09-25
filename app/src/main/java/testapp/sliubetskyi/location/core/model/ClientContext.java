@@ -2,7 +2,7 @@ package testapp.sliubetskyi.location.core.model;
 
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.LocationManager;
-import testapp.sliubetskyi.location.android.components.NotificationDisplayer;
+import testapp.sliubetskyi.location.android.components.NotificationHelper;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
 import testapp.sliubetskyi.location.android.components.PersistentStorage;
 import testapp.sliubetskyi.location.android.components.ResourcesIdHolder;
@@ -22,8 +22,8 @@ public final class ClientContext implements IClientContext {
     private final IPersistentData persistentStorage;
     private final ILocationManager locationManager;
     private final IPermissionsManager permissionsManager;
-    private final ResourcesIdHolder resourcesProvider;
-    private final NotificationDisplayer notificationDisplayer;
+    private final IResourcesProvider resourcesProvider;
+    private final NotificationHelper notificationHelper;
 
     @SuppressWarnings("unused")
     public ClientContext(App.ClientContextKey clientContextKey, App app) {
@@ -31,7 +31,7 @@ public final class ClientContext implements IClientContext {
         permissionsManager = new PermissionManager(app);
         locationManager = new LocationManager(app, persistentStorage.getUserLocation());
         resourcesProvider = new ResourcesIdHolder(app);
-        notificationDisplayer = new NotificationDisplayer(app);
+        notificationHelper = new NotificationHelper(app);
         appState = new AppState(app, persistentStorage, permissionsManager);
     }
 
@@ -61,7 +61,7 @@ public final class ClientContext implements IClientContext {
     }
 
     @Override
-    public NotificationDisplayer getNotificationDisplayer() {
-        return notificationDisplayer;
+    public NotificationHelper getNotificationHelper() {
+        return notificationHelper;
     }
 }

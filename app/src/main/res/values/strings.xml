@@ -17,7 +17,7 @@
 
     <string name="notification_channel_name">Default</string>
 
-    <string name="service_status_online">%s service.  Status: online</string>
+    <string name="service_status_online">%s service.  Status: tracked distance is %.2f</string>
     <string name="start_distance_tracking">Start distance tracking</string>
 
 

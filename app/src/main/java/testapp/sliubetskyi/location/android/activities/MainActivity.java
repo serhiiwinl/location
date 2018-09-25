@@ -2,6 +2,7 @@ package testapp.sliubetskyi.location.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
@@ -11,19 +12,24 @@ import android.widget.EditText;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.services.LocationTrackerService;
-import testapp.sliubetskyi.location.core.model.maps.LocationData;
 import testapp.sliubetskyi.location.core.presenters.MainPresenter;
-import testapp.sliubetskyi.location.core.ui.MainView;
+import testapp.sliubetskyi.location.core.ui.IMainView;
 
-public class MainActivity extends BaseActivity<MainPresenter, MainView> implements
-        MainView, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends BaseActivity<MainPresenter, IMainView> implements
+        IMainView, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private CheckBox allowLocationTrackingCheckBox;
     private EditText distanceInputField;
 
     @Override
-    MainPresenter createPresenter() {
+    public MainPresenter createPresenter() {
         return new MainPresenter(getClientContext());
+    }
+
+    @NonNull
+    @Override
+    public IMainView getIView() {
+        return this;
     }
 
     @Override
@@ -91,10 +97,5 @@ public class MainActivity extends BaseActivity<MainPresenter, MainView> implemen
     protected void permissionDenied() {
         super.permissionDenied();
         presenter.enableLocationTracking(false);
-    }
-
-    @Override
-    public void onLocationChanged(LocationData location) {
-
     }
 }

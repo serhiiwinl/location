@@ -11,24 +11,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.core.model.modules.IPermissionsManager;
 
 /**
  * Encapsulates location permissions request and checking logic.
  */
 @SuppressWarnings("WeakerAccess")
-public class PermissionManager implements IPermissionsManager {
+public class PermissionManager extends ApplicationComponent implements IPermissionsManager {
 
     public static final int ALL_PERMISSIONS_REQUEST_CODE = 537;
 
-    Context context;
 
     static List<String> locationPermissions = Arrays.asList(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION);
 
-    public PermissionManager(Context context) {
-        this.context = context;
+    public PermissionManager(App app) {
+        super(app);
     }
 
     public static void askForRejectedPermissions(Activity activity) {
@@ -52,7 +52,7 @@ public class PermissionManager implements IPermissionsManager {
 
     @Override
     public boolean isPermissionAvailable(String permission) {
-        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(app, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override

@@ -16,11 +16,12 @@ import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
 import testapp.sliubetskyi.location.core.model.ClientContext;
 import testapp.sliubetskyi.location.core.model.StringsIds;
+import testapp.sliubetskyi.location.core.presenters.IPresenterViewComponent;
 import testapp.sliubetskyi.location.core.presenters.Presenter;
-import testapp.sliubetskyi.location.core.ui.IBaseActivityView;
+import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
 
-@SuppressWarnings("unchecked")
-public abstract class BaseActivity<P extends Presenter<V>, V extends IBaseActivityView> extends FragmentActivity implements IBaseActivityView {
+public abstract class BaseActivity<P extends Presenter<V>, V extends ILocationUpdaterView> extends
+        FragmentActivity implements ILocationUpdaterView, IPresenterViewComponent<P, V> {
 
     protected P presenter;
     @SuppressWarnings("FieldCanBeLocal")
@@ -35,16 +36,15 @@ public abstract class BaseActivity<P extends Presenter<V>, V extends IBaseActivi
 
     @Override
     protected void onStart() {
-        presenter.onViewBound((V) this);
+        presenter.bindView(getIView());
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        presenter.onViewUnbound((V) this);
+        presenter.unbindView();
         super.onStop();
     }
-
 
     @Override
     public void onResolvableException(Exception resolvable) {
@@ -96,8 +96,6 @@ public abstract class BaseActivity<P extends Presenter<V>, V extends IBaseActivi
             }
         }
     }
-
-    abstract P createPresenter();
 
     //Helpers methods block
 

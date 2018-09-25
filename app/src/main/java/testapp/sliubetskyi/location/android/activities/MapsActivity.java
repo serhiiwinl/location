@@ -1,6 +1,7 @@
 package testapp.sliubetskyi.location.android.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +24,17 @@ public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implemen
     private Marker marker;
     private String defaultMarkerTitle;
 
+    @NonNull
+    @Override
+    public MapsView getIView() {
+        return this;
+    }
+
+    @Override
+    public MapsPresenter createPresenter() {
+        return new MapsPresenter(getClientContext());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +51,6 @@ public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implemen
         if (map != null)
             presenter.saveCameraParams(map.getCameraPosition().zoom);
         super.onPause();
-    }
-
-    @Override
-    MapsPresenter createPresenter() {
-        return new MapsPresenter(getClientContext());
     }
 
     /**

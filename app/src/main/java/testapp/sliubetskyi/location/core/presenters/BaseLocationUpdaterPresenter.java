@@ -20,37 +20,36 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
 
     @Override
     public void onViewBound(@NonNull V view) {
-        super.onViewBound(view);
         startLocationTracking();
     }
 
     @Override
     public void onViewUnbound(V view) {
         stopLocationTracking();
-        super.onViewUnbound(view);
-    }
-
-    void startLocationTracking() {
-        if (clientContext.getPersistentStorage().isUserAllowedTracking()) {
-            if (clientContext.getPermissionsManager().isLocationPermissionsAllowed())
-                clientContext.getLocationManager().addLocationUpdatesListener(this);
-            else
-                getView().askLocationPermissions();
-        }
-    }
-
-    void stopLocationTracking() {
-        clientContext.getLocationManager().removeLocationUpdatesListener(this);
-        clientContext.getPersistentStorage().setUserLocation(clientContext.getLocationManager().getCurrentLocation());
     }
 
     @Override
     public void onLocationChanged(LocationData location) {
-        getView().onLocationChanged(location);
+        runViewAction(view -> view.onLocationChanged(location));
     }
 
     @Override
     public void onResolvableException(Exception resolvable) {
-        getView().onResolvableException(resolvable);
+        runViewAction(view -> view.onResolvableException(resolvable));
+    }
+
+    void startLocationTracking() {
+        if (clientContext.getPersistentStorage().isUserAllowedTracking()) {
+            if (getPermissionsManager().isLocationPermissionsAllowed()) {
+                getLocationManager().addLocationUpdatesListener(this);
+            } else {
+                runViewAction(ILocationUpdaterView::askLocationPermissions);
+            }
+        }
+    }
+
+    void stopLocationTracking() {
+        getLocationManager().removeLocationUpdatesListener(this);
+        clientContext.getPersistentStorage().setUserLocation(getLocationManager().getCurrentLocation());
     }
 }

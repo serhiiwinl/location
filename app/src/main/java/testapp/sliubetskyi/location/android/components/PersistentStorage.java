@@ -10,7 +10,7 @@ import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
 /**
  * Wraps {@link SharedPreferences} object and implements {@link IPersistentData}.
  */
-public class PersistentStorage implements IPersistentData {
+public class PersistentStorage extends ApplicationComponent implements IPersistentData {
     private static final String fileName = "testapp.sliubetskyi.location.PREFERENCE_FILE_KEY";
     private final SharedPreferences sharedPref;
 
@@ -28,8 +28,9 @@ public class PersistentStorage implements IPersistentData {
     private static final int DEFAULT_USER_LNG_COORDINATE = 151;
     private static final float DEFAULT_USER_MAPS_CAMERA_ZOOM_LEVEL = -1f;
 
-    public PersistentStorage(App context) {
-        sharedPref = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+    public PersistentStorage(App app) {
+        super(app);
+        sharedPref = app.getSharedPreferences(fileName, Context.MODE_PRIVATE);
     }
 
     @Override

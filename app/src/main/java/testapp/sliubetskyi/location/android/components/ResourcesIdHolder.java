@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import testapp.sliubetskyi.location.R;
+import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.core.model.StringsIds;
 import testapp.sliubetskyi.location.core.model.modules.IResourcesProvider;
 
 @SuppressWarnings("WeakerAccess")
-final public class ResourcesIdHolder implements IResourcesProvider {
+final public class ResourcesIdHolder extends ApplicationComponent implements IResourcesProvider {
 
-    private final Context context;
     private static Map<Class<? extends Enum>, Map<? extends Enum, Integer>> clazzToStringValueMap = new HashMap<>();
 
     static {
@@ -27,13 +27,13 @@ final public class ResourcesIdHolder implements IResourcesProvider {
         }
     }
 
-    public ResourcesIdHolder(Context context) {
-        this.context = context;
+    public ResourcesIdHolder(App app) {
+        super(app);
     }
 
     @Override
     public String stringFromEnum(Enum obj) {
-        return stringFromEnum(obj, context);
+        return stringFromEnum(obj, app);
     }
 
 

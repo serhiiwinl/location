@@ -4,61 +4,36 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.os.Binder;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import testapp.sliubetskyi.location.R;
-import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.activities.MainActivity;
 import testapp.sliubetskyi.location.core.model.maps.LocationData;
-import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
 import testapp.sliubetskyi.location.core.presenters.BaseLocationUpdaterPresenter;
 import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
 
 /**
  * Starts user location tracking in background and calculates user tracked distance.
  */
-public class LocationTrackerService extends Service implements ILocationUpdaterView {
-    private BaseLocationUpdaterPresenter<LocationTrackerService> presenter;
-    private static final int ONGOING_NOTIFICATION_ID = -1337;
+public class LocationTrackerService extends BaseService<BaseLocationUpdaterPresenter<ILocationUpdaterView>,
+        ILocationUpdaterView> implements ILocationUpdaterView {
 
-    private IBinder binder = new LocalBinder();
+    private static final int TARGET_ACHIEVED_NOTIFICATION_ID = 1001;
+    private static final int ONGOING_NOTIFICATION_ID = 1000;
+
     private LocationData prevLocation;
     private float trackedDistance;
-
-    public final class LocalBinder extends Binder {
-        public LocationTrackerService getService() {
-            return LocationTrackerService.this;
-        }
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        presenter = new BaseLocationUpdaterPresenter<>(getApp().getClientContext());
-        startForeground(ONGOING_NOTIFICATION_ID, getApp()
-                .getClientContext()
-                .getNotificationDisplayer()
-                .buildForegroundNotification(this, getPendingIntent()));
-        presenter.onViewBound(this);
+        startForeground(ONGOING_NOTIFICATION_ID, getNotificationHelper()
+                .buildForegroundNotification(this, getPendingIntent(), trackedDistance));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        presenter.onViewUnbound(this);
-        super.onDestroy();
     }
 
     @Override
@@ -70,12 +45,15 @@ public class LocationTrackerService extends Service implements ILocationUpdaterV
             getPersistentStorage().setTrackedDistance(trackedDistance);
 
             if (getPersistentStorage().getTargetDistance() <= trackedDistance) {
-                getApp().getClientContext().getNotificationDisplayer()
+                getNotificationHelper()
                         .showNotificationAtNotificationBar(this, getString(R.string.target_achieved),
                         R.drawable.ic_launcher_foreground,
                         getString(R.string.service_status_online, getPersistentStorage().getTargetDistance()),
-                        getPendingIntent(), 11);
+                        getPendingIntent(), TARGET_ACHIEVED_NOTIFICATION_ID);
                 stopForeground(true);
+            } else {
+                getNotificationHelper().updateForegroundNotification(ONGOING_NOTIFICATION_ID,
+                        this, getPendingIntent(), trackedDistance);
             }
         }
         prevLocation = location;
@@ -86,12 +64,24 @@ public class LocationTrackerService extends Service implements ILocationUpdaterV
         return PendingIntent.getActivity(this, 0, notificationIntent, 0);
     }
 
-    App getApp() {
-        return (App) getApplicationContext();
+    @Override
+    public void onResolvableException(Exception resolvable) {
+        //TODO: Need to go to activity with this
     }
 
-    private IPersistentData getPersistentStorage() {
-        return getApp().getClientContext().getPersistentStorage();
+    @Override
+    public void askLocationPermissions() {
+        //TODO: Need to go to activity with this
     }
 
+    @NonNull
+    @Override
+    public ILocationUpdaterView getIView() {
+        return this;
+    }
+
+    @Override
+    public BaseLocationUpdaterPresenter<ILocationUpdaterView> createPresenter() {
+        return new BaseLocationUpdaterPresenter<>(getApp().getClientContext());
+    }
 }

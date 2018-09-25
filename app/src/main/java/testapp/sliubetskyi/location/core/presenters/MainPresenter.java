@@ -3,36 +3,26 @@ package testapp.sliubetskyi.location.core.presenters;
 import android.support.annotation.NonNull;
 
 import testapp.sliubetskyi.location.core.model.ClientContext;
-import testapp.sliubetskyi.location.core.ui.MainView;
-import testapp.sliubetskyi.location.core.ui.impl.NullableMainView;
+import testapp.sliubetskyi.location.core.ui.IMainView;
 
-public class MainPresenter extends BaseLocationUpdaterPresenter<MainView> {
+public class MainPresenter extends BaseLocationUpdaterPresenter<IMainView> {
     public MainPresenter(ClientContext clientContext) {
         super(clientContext);
     }
 
     @Override
-    public void onViewBound(@NonNull MainView view) {
-        super.onViewBound(view);
+    public void onViewBound(@NonNull IMainView view) {
         view.setUpTrackingSettings(getAppState().isLocationTrackingAllowed(), getAppState().isPermissionsBlockedForever());
     }
 
-    @Override
-    public MainView getView() {
-        MainView view = super.getView();
-        if (view == null)
-            view = new NullableMainView();
-        return view;
-    }
-
     public void openMapsActivity() {
-        getView().openMapsActivity();
+        runViewAction(IMainView::openMapsActivity);
     }
 
     public void enableLocationTracking(boolean isChecked) {
         //save to cash
         getPersistentStorage().setUserAllowedTracking(isChecked);
-        getView().setUpTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever());
+        runViewAction(view -> view.setUpTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever()));
         //start tracking if allowed
         if (isChecked)
             startLocationTracking();
@@ -46,7 +36,6 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<MainView> {
      */
     public void startDistanceTracking(long distance) {
         getPersistentStorage().setTargetDistance(distance);
-        getView().openDistanceTrackingService();
-
+        runViewAction(IMainView::openDistanceTrackingService);
     }
 }

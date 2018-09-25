@@ -1,7 +1,6 @@
 package testapp.sliubetskyi.location.android.components;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
@@ -20,14 +19,14 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-import testapp.sliubetskyi.location.core.model.modules.ILocationManager;
+import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.core.model.maps.LocationData;
+import testapp.sliubetskyi.location.core.model.modules.ILocationManager;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-public class LocationManager implements ILocationManager {
+public class LocationManager extends ApplicationComponent implements ILocationManager {
 
-    private final Context context;
     private LocationRequest locationRequest;
     private long UPDATE_INTERVAL = 10000;  /* 10 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
@@ -36,8 +35,8 @@ public class LocationManager implements ILocationManager {
     private final List<LocationUpdatesListener> listeners = new ArrayList<>();
     private LocationData locationData;
 
-    public LocationManager(final Context context, LocationData locationData) {
-        this.context = context;
+    public LocationManager(final App context, LocationData locationData) {
+        super(context);
         this.locationData = locationData;
     }
 
@@ -51,15 +50,15 @@ public class LocationManager implements ILocationManager {
         builder.addLocationRequest(locationRequest);
         LocationSettingsRequest locationSettingsRequest = builder.build();
 
-        SettingsClient settingsClient = LocationServices.getSettingsClient(context);
+        SettingsClient settingsClient = LocationServices.getSettingsClient(app);
         Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(locationSettingsRequest);
         task.addOnSuccessListener(locationSettingsResponse -> {
-            int accessFinePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+            int accessFinePermission = ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION);
             if (accessFinePermission == PackageManager.PERMISSION_GRANTED) {
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                 locationRequest.setInterval(UPDATE_INTERVAL);
                 locationRequest.setFastestInterval(FASTEST_INTERVAL);
-                fusedLocationProviderClient = getFusedLocationProviderClient(context);
+                fusedLocationProviderClient = getFusedLocationProviderClient(app);
                 locationCallback = new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {

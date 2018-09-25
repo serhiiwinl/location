@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.App;
 
-public class NotificationDisplayer {
+public class NotificationHelper extends ApplicationComponent {
 
     /**
      * The Id of the default notification channel used by this application to display all
@@ -20,12 +20,11 @@ public class NotificationDisplayer {
      */
     private static final String CHANNEL_ID = "default_channel_id";
 
-    private final App context;
     private final NotificationManager notificationManager;
 
-    public NotificationDisplayer(App context) {
-        this.context = context;
-        this.notificationManager = ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
+    public NotificationHelper(App app) {
+        super(app);
+        this.notificationManager = ((NotificationManager) app.getSystemService(Context.NOTIFICATION_SERVICE));
     }
 
     public void showNotificationAtNotificationBar(Context context, String contentTitle, int iconId,
@@ -43,18 +42,28 @@ public class NotificationDisplayer {
      * <p>This method will also create a default notification channel on the platforms that
      * require it.</p>
      *
-     * @param context
-     *         the context of the service.
-     * @param intent
-     *         a {@link PendingIntent} to send when the notification is clicked.
+     * @param context the context of the service.
+     * @param intent a {@link PendingIntent} to send when the notification is clicked.
+     * @param distance tracked distance
      * @return newly-created notification instance, never {@code null}.
      */
-    public Notification buildForegroundNotification(Context context, PendingIntent intent) {
+    public Notification buildForegroundNotification(Context context, PendingIntent intent, float distance) {
         final String appName = context.getString(R.string.app_name);
 
         createNotificationChannel(context);
         return createBuilder(context, R.drawable.ic_launcher_foreground, appName,
-                context.getString(R.string.service_status_online, appName), intent).build();
+                context.getString(R.string.service_status_online, appName, distance), intent).build();
+    }
+
+    /**
+     * Updates foreground service notification if already visible or shows new notification.
+     * @param notificationId the updated notification id.
+     * @param context the context of the service.
+     * @param intent a {@link PendingIntent} to send when the notification is clicked.
+     * @param distance current tracked distance.
+     */
+    public void updateForegroundNotification(int notificationId, Context context, PendingIntent intent, float distance) {
+        this.notificationManager.notify(notificationId, buildForegroundNotification(context, intent, distance));
     }
 
     /**
@@ -63,8 +72,7 @@ public class NotificationDisplayer {
      * <p>The notification channel is only created when the application is running on platform with
      * API level 26 or higher (Android 8.0 Oreo). This method is a no-op on earlier platforms.</p>
      *
-     * @param context
-     *         the context to retrieve string resources.
+     * @param context the context to retrieve string resources.
      */
     private void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
