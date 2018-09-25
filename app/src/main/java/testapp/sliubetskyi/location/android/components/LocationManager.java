@@ -75,8 +75,10 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                 locationCallback = new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
+                        if (locationResult == null)
+                            return;
                         Location lastLocation = locationResult.getLastLocation();
-                        locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude());
+                        locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude(), lastLocation.getAccuracy());
                         for (LocationUpdatesListener listener : listeners)
                             listener.onLocationUpdate(locationData);
                     }

@@ -20,7 +20,6 @@ public class PersistentStorage extends ApplicationComponent implements IPersiste
     private static final String USER_ALLOWED_TRACKING_KEY = "user allowed tracking";
     private static final String USER_BLOCK_PERMISSIONS_FOREVER_KEY = "user block permissions forever";
     private static final String USER_CAMERA_ZOOM_LEVEL = "user camera zoom level";
-    private static final String USER_TRACKED_DISTANCE_KEY = "user tracked distance key";
     private static final String USER_TARGET_DISTANCE_KEY = "user target distance key";
 
     //Sidney coordinates
@@ -37,7 +36,7 @@ public class PersistentStorage extends ApplicationComponent implements IPersiste
     public LocationData getUserLocation() {
         float lat = sharedPref.getFloat(USER_LAT_COORDINATE_KEY, DEFAULT_USER_LAT_COORDINATE);
         float lng = sharedPref.getFloat(USER_LNG_COORDINATE_KEY, DEFAULT_USER_LNG_COORDINATE);
-        return new LocationData(lat, lng);
+        return new LocationData(lat, lng, 10);
     }
 
     @Override
