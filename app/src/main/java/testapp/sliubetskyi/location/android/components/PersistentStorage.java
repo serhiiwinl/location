@@ -75,16 +75,6 @@ public class PersistentStorage extends ApplicationComponent implements IPersiste
     }
 
     @Override
-    public void setTrackedDistance(float trackedDistance) {
-        sharedPref.edit().putFloat(USER_TRACKED_DISTANCE_KEY, trackedDistance).apply();
-    }
-
-    @Override
-    public float getTrackedDistance() {
-        return sharedPref.getFloat(USER_TRACKED_DISTANCE_KEY, 0);
-    }
-
-    @Override
     public void setTargetDistance(long targetDistance) {
         sharedPref.edit().putLong(USER_TARGET_DISTANCE_KEY, targetDistance).apply();
     }

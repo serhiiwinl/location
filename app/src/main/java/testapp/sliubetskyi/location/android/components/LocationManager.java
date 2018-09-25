@@ -6,7 +6,10 @@ import android.location.Location;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -65,7 +68,14 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                         Location lastLocation = locationResult.getLastLocation();
                         locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude());
                         for (LocationUpdatesListener listener : listeners)
-                            listener.onLocationChanged(locationData);
+                            listener.onLocationUpdate(locationData);
+                    }
+
+                    @Override
+                    public void onLocationAvailability(LocationAvailability locationAvailability) {
+                        if (!locationAvailability.isLocationAvailable()) {
+                            //TODO:we should handle it here or in listeners
+                        }
                     }
                 };
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
@@ -89,20 +99,16 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
 
     @Override
     public void addLocationUpdatesListener(LocationUpdatesListener locationUpdatesListener) {
-        synchronized (listeners) {
-            listeners.add(locationUpdatesListener);
-            if (fusedLocationProviderClient == null)
-                startLocationUpdates();
-        }
+        listeners.add(locationUpdatesListener);
+        if (fusedLocationProviderClient == null)
+            startLocationUpdates();
     }
 
     @Override
     public void removeLocationUpdatesListener(LocationUpdatesListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-            if (listeners.isEmpty()) {
-                stopLocationUpdates();
-            }
+        listeners.remove(listener);
+        if (listeners.isEmpty()) {
+            stopLocationUpdates();
         }
     }
 
@@ -119,7 +125,15 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
          * Notify listener when new location available.
          * @param location current user location
          */
-        void onLocationChanged(LocationData location);
+        void onLocationUpdate(LocationData location);
+
+        /**
+         * Called when there is a change in the availability of location data.
+         * @param locationAvailability The current status of location availability.
+         */
+        default void onLocationAvailability(LocationAvailability locationAvailability) {
+
+        }
 
         /**
          * You can handle this {@link Exception} only in {@link android.app.Activity} listener.

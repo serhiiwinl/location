@@ -14,10 +14,6 @@ public interface IPersistentData {
     void setUserCameraZoomValue(float zoomLevel);
     boolean isPermissionsBlockedForever();
     void setPermissionsBlockedForever(boolean permissionsBlockedForever);
-
-    void setTrackedDistance(float trackedDistance);
-    float getTrackedDistance();
-
     void setTargetDistance(long targetDistance);
     long getTargetDistance();
 }

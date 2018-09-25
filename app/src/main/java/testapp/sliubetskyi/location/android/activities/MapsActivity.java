@@ -84,7 +84,7 @@ public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implemen
     }
 
     @Override
-    public void onLocationChanged(LocationData location) {
+    public void onLocationUpdate(LocationData location) {
         updateCoordinatesOnMap(location);
     }
 

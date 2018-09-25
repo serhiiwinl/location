@@ -47,11 +47,11 @@ public class NotificationHelper extends ApplicationComponent {
      * @param distance tracked distance
      * @return newly-created notification instance, never {@code null}.
      */
-    public Notification buildForegroundNotification(Context context, PendingIntent intent, float distance) {
+    public Notification buildForegroundNotification(Context context, PendingIntent intent, long distance) {
         final String appName = context.getString(R.string.app_name);
 
         createNotificationChannel(context);
-        return createBuilder(context, R.drawable.ic_launcher_foreground, appName,
+        return createBuilder(context, R.drawable.notification_icon, appName,
                 context.getString(R.string.service_status_online, appName, distance), intent).build();
     }
 
@@ -62,7 +62,7 @@ public class NotificationHelper extends ApplicationComponent {
      * @param intent a {@link PendingIntent} to send when the notification is clicked.
      * @param distance current tracked distance.
      */
-    public void updateForegroundNotification(int notificationId, Context context, PendingIntent intent, float distance) {
+    public void updateForegroundNotification(int notificationId, Context context, PendingIntent intent, long distance) {
         this.notificationManager.notify(notificationId, buildForegroundNotification(context, intent, distance));
     }
 

@@ -25,6 +25,12 @@ public abstract class BaseService<P extends Presenter<V>, V extends IView> exten
     }
 
     @Override
+    public boolean stopService(Intent name) {
+        presenter.unbindView();
+        return super.stopService(name);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         presenter = createPresenter();

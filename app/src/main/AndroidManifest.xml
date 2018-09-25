@@ -40,7 +40,8 @@
 
         <activity
             android:name=".android.activities.MainActivity"
-            android:label="@string/title_activity_main">
+            android:launchMode="singleTask"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,6 +50,7 @@
         </activity>
 
         <activity
+            android:launchMode="singleTask"
             android:name=".android.activities.MapsActivity"
             android:label="@string/title_activity_maps">
 

@@ -12,22 +12,21 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<IMainView> {
 
     @Override
     public void onViewBound(@NonNull IMainView view) {
-        view.setUpTrackingSettings(getAppState().isLocationTrackingAllowed(), getAppState().isPermissionsBlockedForever());
+        view.updateTrackingSettings(getAppState().isLocationTrackingAllowed(), getAppState().isPermissionsBlockedForever());
     }
 
     public void openMapsActivity() {
         runViewAction(IMainView::openMapsActivity);
     }
 
+    @Override
     public void enableLocationTracking(boolean isChecked) {
-        //save to cash
-        getPersistentStorage().setUserAllowedTracking(isChecked);
-        runViewAction(view -> view.setUpTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever()));
-        //start tracking if allowed
-        if (isChecked)
-            startLocationTracking();
-        else
-            stopLocationTracking();
+        super.enableLocationTracking(isChecked);
+        setUpSettings(isChecked);
+    }
+
+    public void setUpSettings(boolean isChecked) {
+        runViewAction(view -> view.updateTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever()));
     }
 
     /**
@@ -36,6 +35,9 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<IMainView> {
      */
     public void startDistanceTracking(long distance) {
         getPersistentStorage().setTargetDistance(distance);
-        runViewAction(IMainView::openDistanceTrackingService);
+        if (distance > 0)
+            runViewAction(view -> view.openDistanceTrackingService(distance));
     }
+
+
 }

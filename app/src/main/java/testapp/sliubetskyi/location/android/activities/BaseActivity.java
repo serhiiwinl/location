@@ -16,11 +16,11 @@ import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
 import testapp.sliubetskyi.location.core.model.ClientContext;
 import testapp.sliubetskyi.location.core.model.StringsIds;
+import testapp.sliubetskyi.location.core.presenters.BaseLocationUpdaterPresenter;
 import testapp.sliubetskyi.location.core.presenters.IPresenterViewComponent;
-import testapp.sliubetskyi.location.core.presenters.Presenter;
 import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
 
-public abstract class BaseActivity<P extends Presenter<V>, V extends ILocationUpdaterView> extends
+public abstract class BaseActivity<P extends BaseLocationUpdaterPresenter<V>, V extends ILocationUpdaterView> extends
         FragmentActivity implements ILocationUpdaterView, IPresenterViewComponent<P, V> {
 
     protected P presenter;
@@ -101,14 +101,17 @@ public abstract class BaseActivity<P extends Presenter<V>, V extends ILocationUp
 
     protected void permissionGranted() {
         Toast.makeText(this, getString(R.string.permission_granted), Toast.LENGTH_LONG).show();
+        presenter.enableLocationTracking(true);
     }
 
     protected void permissionDeniedNeverAsk() {
         getClientContext().getPersistentStorage().setPermissionsBlockedForever(true);
+        presenter.enableLocationTracking(false);
     }
 
     protected void permissionDenied() {
         Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_LONG).show();
+        presenter.enableLocationTracking(false);
     }
 
     App getApp() {

@@ -3,8 +3,12 @@ package testapp.sliubetskyi.location.android.services;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.location.Location;
+import android.os.Binder;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.activities.MainActivity;
@@ -22,13 +26,29 @@ public class LocationTrackerService extends BaseService<BaseLocationUpdaterPrese
     private static final int ONGOING_NOTIFICATION_ID = 1000;
 
     private LocationData prevLocation;
-    private float trackedDistance;
+    private long trackedDistance;
+    private long targetDistance;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        targetDistance = getPersistentStorage().getTargetDistance();
         startForeground(ONGOING_NOTIFICATION_ID, getNotificationHelper()
-                .buildForegroundNotification(this, getPendingIntent(), trackedDistance));
+                .buildForegroundNotification(this, getPendingIntent(), targetDistance));
+    }
+
+    private IBinder binder = new LocationTrackerBinder();
+
+    public final class LocationTrackerBinder extends Binder {
+        public LocationTrackerService getService() {
+            return LocationTrackerService.this;
+        }
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
     }
 
     @Override
@@ -37,41 +57,49 @@ public class LocationTrackerService extends BaseService<BaseLocationUpdaterPrese
     }
 
     @Override
-    public void onLocationChanged(LocationData location) {
+    public void onLocationUpdate(LocationData location) {
         if (prevLocation != null) {
+            if (location.equals(prevLocation))
+                return;
             float[] results = new float[3];
             Location.distanceBetween(prevLocation.lat, prevLocation.lng, location.lat, location.lng, results);
             trackedDistance += results[0];
-            getPersistentStorage().setTrackedDistance(trackedDistance);
 
-            if (getPersistentStorage().getTargetDistance() <= trackedDistance) {
+            if (targetDistance <= trackedDistance) {
                 getNotificationHelper()
-                        .showNotificationAtNotificationBar(this, getString(R.string.target_achieved),
-                        R.drawable.ic_launcher_foreground,
-                        getString(R.string.service_status_online, getPersistentStorage().getTargetDistance()),
+                        .showNotificationAtNotificationBar(this, getString(R.string.app_name),
+                        R.drawable.notification_icon,
+                        getString(R.string.target_distance_achieved, targetDistance),
                         getPendingIntent(), TARGET_ACHIEVED_NOTIFICATION_ID);
-                stopForeground(true);
-            } else {
-                getNotificationHelper().updateForegroundNotification(ONGOING_NOTIFICATION_ID,
-                        this, getPendingIntent(), trackedDistance);
+                stopWork();
             }
         }
         prevLocation = location;
     }
 
+    /**
+     * Stops service at all.
+     */
+    public void stopWork() {
+        presenter.unbindView();
+        stopForeground(true);
+        stopSelf();
+    }
+
+    /**
+     * Restarts target distance tracking.
+     * @param targetDistance new target distance value.
+     */
+    public void restartDistanceTracking(long targetDistance) {
+        this.targetDistance = targetDistance;
+        this.trackedDistance = 0;
+        getNotificationHelper().updateForegroundNotification(ONGOING_NOTIFICATION_ID,
+                this, getPendingIntent(), targetDistance);
+    }
+
     private PendingIntent getPendingIntent() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         return PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    }
-
-    @Override
-    public void onResolvableException(Exception resolvable) {
-        //TODO: Need to go to activity with this
-    }
-
-    @Override
-    public void askLocationPermissions() {
-        //TODO: Need to go to activity with this
     }
 
     @NonNull

@@ -29,8 +29,8 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
     }
 
     @Override
-    public void onLocationChanged(LocationData location) {
-        runViewAction(view -> view.onLocationChanged(location));
+    public void onLocationUpdate(LocationData location) {
+        runViewAction(view -> view.onLocationUpdate(location));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
         runViewAction(view -> view.onResolvableException(resolvable));
     }
 
-    void startLocationTracking() {
+    private void startLocationTracking() {
         if (clientContext.getPersistentStorage().isUserAllowedTracking()) {
             if (getPermissionsManager().isLocationPermissionsAllowed()) {
                 getLocationManager().addLocationUpdatesListener(this);
@@ -48,8 +48,18 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
         }
     }
 
-    void stopLocationTracking() {
+    private void stopLocationTracking() {
         getLocationManager().removeLocationUpdatesListener(this);
         clientContext.getPersistentStorage().setUserLocation(getLocationManager().getCurrentLocation());
+    }
+
+    public void enableLocationTracking(boolean isChecked) {
+        //save to cash
+        getPersistentStorage().setUserAllowedTracking(isChecked);
+        //start tracking if allowed
+        if (isChecked)
+            startLocationTracking();
+        else
+            stopLocationTracking();
     }
 }
