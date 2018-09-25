@@ -68,7 +68,10 @@ public class LocationTrackerService extends BaseService<LocationUpdaterPresenter
                 return;
             float[] results = new float[3];
             Location.distanceBetween(prevLocation.lat, prevLocation.lng, location.lat, location.lng, results);
-            trackedDistance += results[0];
+            float distance = results[0];
+            if (distance < location.accuracy)
+                return;
+            trackedDistance += distance;
 
             //if target distance is achieved - stop tracking and show congrats notification.
             if (targetDistance <= trackedDistance) {
