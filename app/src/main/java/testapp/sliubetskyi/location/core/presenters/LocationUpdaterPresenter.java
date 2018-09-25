@@ -11,10 +11,10 @@ import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
  * Presenter is needed for all views interested in location updates.
  * @param <V> {@link testapp.sliubetskyi.location.core.ui.IView} sub type.
  */
-public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
+public class LocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
         LocationManager.LocationUpdatesListener {
 
-    public BaseLocationUpdaterPresenter(ClientContext clientContext) {
+    public LocationUpdaterPresenter(ClientContext clientContext) {
         super(clientContext);
     }
 
@@ -38,6 +38,17 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
         runViewAction(view -> view.onResolvableException(resolvable));
     }
 
+    public void enableLocationTracking(boolean isChecked) {
+        //save to cash
+        getPersistentStorage().setUserAllowedTracking(isChecked);
+
+        //start tracking if allowed
+        if (isChecked)
+            startLocationTracking();
+        else
+            stopLocationTracking();
+    }
+
     private void startLocationTracking() {
         if (clientContext.getPersistentStorage().isUserAllowedTracking()) {
             if (getPermissionsManager().isLocationPermissionsAllowed()) {
@@ -51,15 +62,5 @@ public class BaseLocationUpdaterPresenter<V extends ILocationUpdaterView> extend
     private void stopLocationTracking() {
         getLocationManager().removeLocationUpdatesListener(this);
         clientContext.getPersistentStorage().setUserLocation(getLocationManager().getCurrentLocation());
-    }
-
-    public void enableLocationTracking(boolean isChecked) {
-        //save to cash
-        getPersistentStorage().setUserAllowedTracking(isChecked);
-        //start tracking if allowed
-        if (isChecked)
-            startLocationTracking();
-        else
-            stopLocationTracking();
     }
 }

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import testapp.sliubetskyi.location.core.model.ClientContext;
 import testapp.sliubetskyi.location.core.ui.IMainView;
 
-public class MainPresenter extends BaseLocationUpdaterPresenter<IMainView> {
+public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     public MainPresenter(ClientContext clientContext) {
         super(clientContext);
     }
@@ -15,17 +15,13 @@ public class MainPresenter extends BaseLocationUpdaterPresenter<IMainView> {
         view.updateTrackingSettings(getAppState().isLocationTrackingAllowed(), getAppState().isPermissionsBlockedForever());
     }
 
-    public void openMapsActivity() {
+    public void openMaps() {
         runViewAction(IMainView::openMapsActivity);
     }
 
     @Override
     public void enableLocationTracking(boolean isChecked) {
         super.enableLocationTracking(isChecked);
-        setUpSettings(isChecked);
-    }
-
-    public void setUpSettings(boolean isChecked) {
         runViewAction(view -> view.updateTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever()));
     }
 

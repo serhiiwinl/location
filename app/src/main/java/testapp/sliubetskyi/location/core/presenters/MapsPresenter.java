@@ -5,7 +5,7 @@ import testapp.sliubetskyi.location.core.model.StringsIds;
 import testapp.sliubetskyi.location.core.model.maps.LocationData;
 import testapp.sliubetskyi.location.core.ui.MapsView;
 
-public class MapsPresenter extends BaseLocationUpdaterPresenter<MapsView> {
+public class MapsPresenter extends LocationUpdaterPresenter<MapsView> {
 
     public MapsPresenter(ClientContext clientContext) {
         super(clientContext);

@@ -16,15 +16,14 @@ import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
 import testapp.sliubetskyi.location.core.model.ClientContext;
 import testapp.sliubetskyi.location.core.model.StringsIds;
-import testapp.sliubetskyi.location.core.presenters.BaseLocationUpdaterPresenter;
+import testapp.sliubetskyi.location.core.presenters.LocationUpdaterPresenter;
 import testapp.sliubetskyi.location.core.presenters.IPresenterViewComponent;
 import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
 
-public abstract class BaseActivity<P extends BaseLocationUpdaterPresenter<V>, V extends ILocationUpdaterView> extends
+public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V extends ILocationUpdaterView> extends
         FragmentActivity implements ILocationUpdaterView, IPresenterViewComponent<P, V> {
 
     protected P presenter;
-    @SuppressWarnings("FieldCanBeLocal")
     private int REQUEST_CHECK_SETTINGS = 101;
 
     @Override

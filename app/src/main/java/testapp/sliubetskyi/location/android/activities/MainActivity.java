@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.services.LocationTrackerService;
@@ -74,7 +73,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.show_current_location) {
-            presenter.openMapsActivity();
+            presenter.openMaps();
         } else if (id == R.id.start_distance_tracking) {
             if (distanceInputField.getText() != null) {
                 String inputText = distanceInputField.getText().toString();

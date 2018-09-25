@@ -28,6 +28,9 @@ import testapp.sliubetskyi.location.core.model.modules.ILocationManager;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
+/**
+ * Encapsulates logic with retrieving and subscribing for location updates.
+ */
 public class LocationManager extends ApplicationComponent implements ILocationManager {
 
     private LocationRequest locationRequest;
@@ -38,6 +41,11 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
     private final List<LocationUpdatesListener> listeners = new ArrayList<>();
     private LocationData locationData;
 
+    /**
+     * CTOR
+     * @param context app context
+     * @param locationData last saved location data
+     */
     public LocationManager(final App context, LocationData locationData) {
         super(context);
         this.locationData = locationData;
@@ -47,17 +55,19 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
      * Starts to track user location if it is possible.
      */
     private void startLocationUpdates() {
-        //Get current location settings
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         locationRequest = new LocationRequest();
         builder.addLocationRequest(locationRequest);
         LocationSettingsRequest locationSettingsRequest = builder.build();
 
+        //Get settings client
         SettingsClient settingsClient = LocationServices.getSettingsClient(app);
         Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(locationSettingsRequest);
+
         task.addOnSuccessListener(locationSettingsResponse -> {
             int accessFinePermission = ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION);
             if (accessFinePermission == PackageManager.PERMISSION_GRANTED) {
+                //set up location request params
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                 locationRequest.setInterval(UPDATE_INTERVAL);
                 locationRequest.setFastestInterval(FASTEST_INTERVAL);
@@ -78,9 +88,11 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                         }
                     }
                 };
+                //start updates
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             }
         });
+        //force user to enable GPS or WI-FI
         task.addOnFailureListener(e -> {
             for (LocationUpdatesListener listener : listeners)
                 listener.onResolvableException(e);
