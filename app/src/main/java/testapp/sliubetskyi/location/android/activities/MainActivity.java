@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
     private boolean isServiceBound;
     private LocationTrackerService locationTrackerService;
+    private long targetDistance;
 
     @Override
     public MainPresenter createPresenter() {
@@ -53,7 +54,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
         distanceInputField = findViewById(R.id.distance_input_field);
 
-        long targetDistance = getClientContext().getPersistentStorage().getTargetDistance();
+        targetDistance = getPersistentStorage().getTargetDistance();
         if (targetDistance > 0)
             distanceInputField.setText(String.valueOf(targetDistance));
         else
@@ -77,7 +78,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         } else if (id == R.id.start_distance_tracking) {
             if (distanceInputField.getText() != null) {
                 String inputText = distanceInputField.getText().toString();
-                presenter.startDistanceTracking(Long.parseLong(inputText));
+                if (!inputText.equalsIgnoreCase(""))
+                    presenter.startDistanceTracking(Long.parseLong(inputText));
             }
         }
     }
@@ -101,9 +103,9 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         allowLocationTrackingCheckBox.setChecked(isTrackingAllowed);
         allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
 
-        String openMapsButtonString = isTrackingAllowed?getString(R.string.show_current_location):getString(R.string.open_maps);
+        String openMapsButtonString = isTrackingAllowed ? getString(R.string.show_current_location) : getString(R.string.open_maps);
         showCurrentLocationButton.setText(openMapsButtonString);
-        distanceTrackerButton.setEnabled(isTrackingAllowed);
+        distanceTrackerButton.setEnabled(isTrackingAllowed && targetDistance > 0);
         if (isServiceBound && !isTrackingAllowed) {
             isServiceBound = false;
             unbindService(connection);
@@ -137,7 +139,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName arg0) {
+        public void onServiceDisconnected(ComponentName componentName) {
             isServiceBound = false;
         }
     };

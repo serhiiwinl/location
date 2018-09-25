@@ -23,7 +23,7 @@ public class Presenter<V extends IView> implements IPresenter<V> {
         void run(V view);
     }
 
-    public Presenter(ClientContext clientContext) {
+    Presenter(ClientContext clientContext) {
         this.clientContext = clientContext;
     }
 
