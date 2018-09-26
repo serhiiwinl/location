@@ -8,13 +8,14 @@ import testapp.sliubetskyi.core.model.modules.IPersistentData;
 /**
  * Holds app state.
  */
-public class AppState implements IAppState {
+public class AppState extends ApplicationComponent implements IAppState {
 
     private IPermissionsManager permissions;
     private IPersistentData persistentData;
     private boolean isAppVisible;
 
     AppState(App app, IPersistentData persistentStorage, IPermissionsManager permissions) {
+        super(app);
         this.persistentData = persistentStorage;
         this.permissions = permissions;
     }
