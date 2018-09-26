@@ -12,8 +12,9 @@ public class AppState implements IAppState {
 
     private IPermissionsManager permissions;
     private IPersistentData persistentData;
+    private boolean isAppVisible;
 
-    public AppState(App app, IPersistentData persistentStorage, IPermissionsManager permissions) {
+    AppState(App app, IPersistentData persistentStorage, IPermissionsManager permissions) {
         this.persistentData = persistentStorage;
         this.permissions = permissions;
     }
@@ -26,5 +27,15 @@ public class AppState implements IAppState {
     @Override
     public boolean isPermissionsBlockedForever() {
         return persistentData.isPermissionsBlockedForever() && !permissions.isLocationPermissionsAllowed();
+    }
+
+    @Override
+    public void appIsVisible(boolean inForeground) {
+        this.isAppVisible = inForeground;
+    }
+
+    @Override
+    public boolean appIsVisible() {
+        return isAppVisible;
     }
 }

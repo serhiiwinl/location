@@ -31,7 +31,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private boolean isServiceBound;
     private LocationTrackerService locationTrackerService;
 
-    public static final String RESTART_LOCATION_UPDATES_REQUEST = "restart_location_updates_request";
+    public static final String RESTART_LOCATION_UPDATES_REQUEST_KEY = "restart_update_request";
+    public static final int RESTART_LOCATION_UPDATES_REQUEST_VALUE = 1110;
 
     @Override
     public MainPresenter createPresenter() {
@@ -77,10 +78,11 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private void handleIntent(Intent intent) {
         if (intent == null)
             return;
-        boolean isNeedToRestartConnectionUpdates = intent.getBooleanExtra(RESTART_LOCATION_UPDATES_REQUEST,
-                false);
-        if (isNeedToRestartConnectionUpdates)
+        int isNeedToRestartConnectionUpdates = intent.getIntExtra(RESTART_LOCATION_UPDATES_REQUEST_KEY, 0);
+        if (isNeedToRestartConnectionUpdates == RESTART_LOCATION_UPDATES_REQUEST_VALUE) {
             presenter.enableLocationTracking(getPersistentStorage().isUserAllowedTracking());
+            intent.putExtra(RESTART_LOCATION_UPDATES_REQUEST_KEY, 0);
+        }
     }
 
     @Override
@@ -140,6 +142,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         String openMapsButtonString = isTrackingAllowed ? getString(R.string.show_current_location) : getString(R.string.open_maps);
         showCurrentLocationButton.setText(openMapsButtonString);
         distanceTrackerButton.setEnabled(isTrackingAllowed && targetDistance > 0);
+        String distanceTrackerButtonText = isServiceBound ? getString(R.string.change_distance_tracking) : getString(R.string.start_distance_tracking);
+        distanceTrackerButton.setText(distanceTrackerButtonText);
 
         String targetDistanceText = targetDistance > 0 ? String.valueOf(targetDistance) : "";
         distanceInputField.setText(targetDistanceText);
@@ -158,6 +162,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         if (isServiceBound) {
             locationTrackerService.restartDistanceTracking(distance);
         } else {
+            presenter.enableLocationTracking(getPersistentStorage().isUserAllowedTracking());
             Intent intent = getServiceIntent();
             startService(intent);
             bindService(intent, connection, Context.BIND_AUTO_CREATE);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import testapp.sliubetskyi.core.model.modules.IAppState;
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.NotificationHelper;
 import testapp.sliubetskyi.core.model.modules.IPersistentData;
@@ -43,6 +44,10 @@ public abstract class BaseService<P extends Presenter<V>, V extends IView> exten
 
     IPersistentData getPersistentStorage() {
         return getApp().getClientContext().getPersistentStorage();
+    }
+
+    IAppState getAppState() {
+        return getApp().getClientContext().getAppState();
     }
 
     NotificationHelper getNotificationHelper() {

@@ -133,17 +133,6 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
         return getApp().getClientContext().getAppState();
     }
 
-    boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if (manager == null) return false;
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Helps to retrieve string from stringFromEnum value.
      * @param string string type
@@ -153,4 +142,20 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
         return getClientContext().getResProvider().stringFromEnum(string);
     }
 
+    /**
+     * Finds service by class name and return true if it is active.
+     * @param serviceClass service class
+     * @return true if needed service is founded
+     */
+    boolean isServiceRunning(Class<?> serviceClass) {
+        //TODO:maybe possible to find better solution
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager == null) return false;
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

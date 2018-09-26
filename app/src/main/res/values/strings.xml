@@ -19,6 +19,7 @@
 
     <string name="service_status_online">%s service.  Status: target distance is %d</string>
     <string name="start_distance_tracking">Start distance tracking</string>
+    <string name="change_distance_tracking">Change target distance</string>
 
 
 </resources>
