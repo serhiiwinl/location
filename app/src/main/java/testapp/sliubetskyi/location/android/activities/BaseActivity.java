@@ -14,7 +14,7 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
-import testapp.sliubetskyi.location.android.ClientContext;
+import testapp.sliubetskyi.location.android.components.ClientContext;
 import testapp.sliubetskyi.core.model.StringsIds;
 import testapp.sliubetskyi.core.model.modules.IAppState;
 import testapp.sliubetskyi.core.model.modules.IPersistentData;

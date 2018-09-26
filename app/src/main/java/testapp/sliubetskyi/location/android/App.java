@@ -2,6 +2,7 @@ package testapp.sliubetskyi.location.android;
 
 import android.app.Application;
 
+import testapp.sliubetskyi.location.android.components.ClientContext;
 import testapp.sliubetskyi.location.android.components.NotificationHelper;
 
 public class App extends Application {
