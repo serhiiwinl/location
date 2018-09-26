@@ -13,14 +13,20 @@ import testapp.sliubetskyi.core.ui.ILocationTrackerView;
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.activities.MainActivity;
 
+import static testapp.sliubetskyi.location.android.activities.MainActivity.LOCATION_PERMISSION_ISSUE_KEY;
+import static testapp.sliubetskyi.location.android.activities.MainActivity.LOCATION_ISSUE;
+import static testapp.sliubetskyi.location.android.activities.MainActivity.PERMISSIONS_ISSUE;
+
 /**
  * Starts user location tracking in background and calculates user tracked distance.
  */
 public class LocationTrackerService extends BaseService<LocationTrackerPresenter,
         ILocationTrackerView> implements ILocationTrackerView {
 
-    private static final int TARGET_ACHIEVED_NOTIFICATION_ID = 1001;
     private static final int ONGOING_NOTIFICATION_ID = 1000;
+    private static final int TARGET_ACHIEVED_NOTIFICATION_ID = 1001;
+    private static final int PERMISSIONS_NOT_ALLOWED_NOTIFICATION_ID = 1002;
+    private static final int LOCATION_NOT_ALLOWED_NOTIFICATION_ID = 1003;
 
     @NonNull
     @Override
@@ -79,13 +85,18 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
     }
 
     @Override
-    public void onResolvableException(Exception resolvable) {
+    public void onLocationNotAvailable() {
         //this callback will be handled in activity
         if (getAppState().appIsVisible()) return;
         getNotificationHelper().showNotificationAtNotificationBar(this, getString(R.string.app_name),
-                        R.drawable.notification_icon,
-                        "location tracking not allowed without GPS, WI-FI or LTE",
-                        getPendingIntent(true), TARGET_ACHIEVED_NOTIFICATION_ID);
+                R.drawable.notification_icon,
+                getString(R.string.location_not_available),
+                getPendingIntent(LOCATION_ISSUE), LOCATION_NOT_ALLOWED_NOTIFICATION_ID);
+    }
+
+    @Override
+    public void onResolvableException(Exception resolvable) {
+        onLocationNotAvailable();
     }
 
     @Override
@@ -95,8 +106,8 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
         getNotificationHelper()
                 .showNotificationAtNotificationBar(this, getString(R.string.app_name),
                         R.drawable.notification_icon,
-                        "location tracking not allowed without permissions",
-                        getPendingIntent(true), TARGET_ACHIEVED_NOTIFICATION_ID);
+                        getString(R.string.permission_denied),
+                        getPendingIntent(PERMISSIONS_ISSUE), PERMISSIONS_NOT_ALLOWED_NOTIFICATION_ID);
     }
 
     /**
@@ -116,17 +127,14 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
         stopSelf();
     }
 
-    private PendingIntent getPendingIntent(boolean restartConnectionUpdates) {
+    private PendingIntent getPendingIntent(int errorCode) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        int flag = 0;
-        if (restartConnectionUpdates) {
-            flag = PendingIntent.FLAG_UPDATE_CURRENT;
-            notificationIntent.putExtra(MainActivity.RESTART_LOCATION_UPDATES_REQUEST_KEY, MainActivity.RESTART_LOCATION_UPDATES_REQUEST_VALUE);
-        }
+        int flag = errorCode > 0 ? PendingIntent.FLAG_UPDATE_CURRENT : 0;
+        notificationIntent.putExtra(LOCATION_PERMISSION_ISSUE_KEY, errorCode);
         return PendingIntent.getActivity(this, 0, notificationIntent, flag);
     }
 
     private PendingIntent getPendingIntent() {
-        return getPendingIntent(false);
+        return getPendingIntent(0);
     }
 }

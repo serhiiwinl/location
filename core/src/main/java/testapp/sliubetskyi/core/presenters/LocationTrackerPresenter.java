@@ -4,6 +4,7 @@ package testapp.sliubetskyi.core.presenters;
 import testapp.sliubetskyi.core.model.maps.LocationData;
 import testapp.sliubetskyi.core.model.modules.IClientContext;
 import testapp.sliubetskyi.core.ui.ILocationTrackerView;
+import testapp.sliubetskyi.core.ui.ILocationUpdaterView;
 
 public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocationTrackerView> {
     private LocationData prevLocation;
@@ -41,4 +42,8 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
         prevLocation = location;
     }
 
+    @Override
+    public void onLocationNotAvailable() {
+        runViewAction(ILocationUpdaterView::onLocationNotAvailable);
+    }
 }

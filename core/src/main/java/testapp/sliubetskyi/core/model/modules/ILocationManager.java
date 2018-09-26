@@ -5,6 +5,7 @@ import testapp.sliubetskyi.core.model.maps.LocationData;
 public interface ILocationManager {
     void addLocationUpdatesListener(ILocationUpdateListener listener);
     void removeLocationUpdatesListener(ILocationUpdateListener listener);
+    void restartUpdates();
     LocationData getCurrentLocation();
 
     /**

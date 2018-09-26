@@ -12,6 +12,7 @@
     <string name="current_unknown">Your are here</string>
 
     <string name="permission_granted">Permission granted!</string>
+    <string name="location_not_available">Location not available! Please check your GPS, WI-FI settings</string>
     <string name="permission_denied">Permission denied! App main functions are restricted.</string>
     <string name="invalid_input">Invalid distance input.</string>
 

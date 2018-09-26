@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -17,8 +18,8 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import testapp.sliubetskyi.core.model.maps.LocationData;
 import testapp.sliubetskyi.core.model.modules.ILocationManager;
@@ -37,7 +38,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private final List<ILocationUpdateListener> listeners = new ArrayList<>();
+    private final Set<ILocationUpdateListener> listeners = new HashSet<>();
     private LocationData locationData;
 
     /**
@@ -78,14 +79,33 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                             return;
                         Location lastLocation = locationResult.getLastLocation();
                         locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude(), lastLocation.getAccuracy());
-                        for (ILocationUpdateListener listener : listeners)
-                            listener.onLocationUpdate(locationData);
+                        synchronized (listeners) {
+                            for (ILocationUpdateListener listener : listeners)
+                                listener.onLocationUpdate(locationData);
+                        }
                     }
 
+                    @SuppressWarnings("deprecation")
                     @Override
                     public void onLocationAvailability(LocationAvailability locationAvailability) {
+                        int locationMode;
+
                         if (!locationAvailability.isLocationAvailable()) {
-                            //TODO:we should handle it here or in listeners
+                            //Check if not available in settings
+                            boolean isLocationAvailable;
+                            try {
+                                locationMode = Settings.Secure.getInt(app.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                                isLocationAvailable = locationMode != Settings.Secure.LOCATION_MODE_OFF;
+                            } catch (Settings.SettingNotFoundException e) {
+                                e.printStackTrace();
+                                isLocationAvailable = false;
+                            }
+                            if (!isLocationAvailable) {
+                                synchronized (listeners) {
+                                    for (ILocationUpdateListener listener : listeners)
+                                        listener.onLocationNotAvailable();
+                                }
+                            }
                         }
                     }
                 };
@@ -95,8 +115,10 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
         });
         //force user to enable GPS or WI-FI
         task.addOnFailureListener(e -> {
-            for (ILocationUpdateListener listener : listeners)
-                listener.onResolvableException(e);
+            synchronized (listeners) {
+                for (ILocationUpdateListener listener : listeners)
+                    listener.onResolvableException(e);
+            }
         });
     }
 
@@ -112,17 +134,26 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
 
     @Override
     public void addLocationUpdatesListener(ILocationUpdateListener locationUpdatesListener) {
-        listeners.add(locationUpdatesListener);
+        synchronized (listeners) {
+            listeners.add(locationUpdatesListener);
+        }
         if (fusedLocationProviderClient == null)
             startLocationUpdates();
     }
 
     @Override
     public void removeLocationUpdatesListener(ILocationUpdateListener listener) {
-        listeners.remove(listener);
-        if (listeners.isEmpty()) {
-            stopLocationUpdates();
+        synchronized (listeners) {
+            listeners.remove(listener);
+            if (listeners.isEmpty())
+                stopLocationUpdates();
         }
+    }
+
+    @Override
+    public void restartUpdates() {
+        stopLocationUpdates();
+        startLocationUpdates();
     }
 
     @Override

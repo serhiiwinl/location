@@ -11,6 +11,8 @@ public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
 
     @Override
     public void onViewBound(IMainView view) {
+        if (getAppState().isLocationTrackingAllowed())
+            super.onViewBound(view);
         view.updateUI(getAppState().isLocationTrackingAllowed(),
                 getAppState().isPermissionsBlockedForever(), getPersistentStorage().getTargetDistance());
     }

@@ -50,7 +50,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     @Override
     public void onActivityStopped(Activity activity) {
-        clientContext.getAppState().appIsVisible(true);
+        clientContext.getAppState().appIsVisible(false);
     }
 
     @Override

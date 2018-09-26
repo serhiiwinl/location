@@ -31,8 +31,9 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private boolean isServiceBound;
     private LocationTrackerService locationTrackerService;
 
-    public static final String RESTART_LOCATION_UPDATES_REQUEST_KEY = "restart_update_request";
-    public static final int RESTART_LOCATION_UPDATES_REQUEST_VALUE = 1110;
+    public static final String LOCATION_PERMISSION_ISSUE_KEY = "restart_update_request";
+    public static final int LOCATION_ISSUE = 1110;
+    public static final int PERMISSIONS_ISSUE = 1111;
 
     @Override
     public MainPresenter createPresenter() {
@@ -78,11 +79,17 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private void handleIntent(Intent intent) {
         if (intent == null)
             return;
-        int isNeedToRestartConnectionUpdates = intent.getIntExtra(RESTART_LOCATION_UPDATES_REQUEST_KEY, 0);
-        if (isNeedToRestartConnectionUpdates == RESTART_LOCATION_UPDATES_REQUEST_VALUE) {
-            presenter.enableLocationTracking(getPersistentStorage().isUserAllowedTracking());
-            intent.putExtra(RESTART_LOCATION_UPDATES_REQUEST_KEY, 0);
+        int errorCode = intent.getIntExtra(LOCATION_PERMISSION_ISSUE_KEY, 0);
+        switch (errorCode) {
+            case LOCATION_ISSUE:
+                onLocationNotAvailable();
+                break;
+            case PERMISSIONS_ISSUE:
+                askLocationPermissions();
+                break;
+
         }
+        intent.putExtra(LOCATION_PERMISSION_ISSUE_KEY, 0);
     }
 
     @Override

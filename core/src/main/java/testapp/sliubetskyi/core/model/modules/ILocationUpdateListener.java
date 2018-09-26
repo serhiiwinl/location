@@ -18,4 +18,9 @@ public interface ILocationUpdateListener {
     default void onResolvableException(Exception resolvable) {
 
     }
+
+    /**
+     * Notify listener when new location not available more.
+     */
+    void onLocationNotAvailable();
 }

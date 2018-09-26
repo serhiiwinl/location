@@ -65,6 +65,11 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
     }
 
     @Override
+    public void onLocationNotAvailable() {
+        presenter.restartLocationTracking();
+    }
+
+    @Override
     public void askLocationPermissions() {
         PermissionManager.askForPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION);

@@ -36,6 +36,11 @@ public class LocationUpdaterPresenter<V extends ILocationUpdaterView> extends Pr
         runViewAction(view -> view.onResolvableException(resolvable));
     }
 
+    @Override
+    public void onLocationNotAvailable() {
+        runViewAction(ILocationUpdaterView::onLocationNotAvailable);
+    }
+
     public void enableLocationTracking(boolean isChecked) {
         //save to cash
         getPersistentStorage().setUserAllowedTracking(isChecked);
@@ -45,6 +50,11 @@ public class LocationUpdaterPresenter<V extends ILocationUpdaterView> extends Pr
             startLocationTracking();
         else
             stopLocationTracking();
+    }
+
+    public void restartLocationTracking() {
+        if (getAppState().isLocationTrackingAllowed())
+            getLocationManager().restartUpdates();
     }
 
     void startLocationTracking() {
