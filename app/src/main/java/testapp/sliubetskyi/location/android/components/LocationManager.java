@@ -6,8 +6,6 @@ import android.location.Location;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -22,9 +20,10 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import testapp.sliubetskyi.core.model.maps.LocationData;
+import testapp.sliubetskyi.core.model.modules.ILocationManager;
+import testapp.sliubetskyi.core.model.modules.ILocationUpdateListener;
 import testapp.sliubetskyi.location.android.App;
-import testapp.sliubetskyi.location.core.model.maps.LocationData;
-import testapp.sliubetskyi.location.core.model.modules.ILocationManager;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -38,7 +37,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private final List<LocationUpdatesListener> listeners = new ArrayList<>();
+    private final List<ILocationUpdateListener> listeners = new ArrayList<>();
     private LocationData locationData;
 
     /**
@@ -79,7 +78,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                             return;
                         Location lastLocation = locationResult.getLastLocation();
                         locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude(), lastLocation.getAccuracy());
-                        for (LocationUpdatesListener listener : listeners)
+                        for (ILocationUpdateListener listener : listeners)
                             listener.onLocationUpdate(locationData);
                     }
 
@@ -96,7 +95,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
         });
         //force user to enable GPS or WI-FI
         task.addOnFailureListener(e -> {
-            for (LocationUpdatesListener listener : listeners)
+            for (ILocationUpdateListener listener : listeners)
                 listener.onResolvableException(e);
         });
     }
@@ -112,14 +111,14 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
     }
 
     @Override
-    public void addLocationUpdatesListener(LocationUpdatesListener locationUpdatesListener) {
+    public void addLocationUpdatesListener(ILocationUpdateListener locationUpdatesListener) {
         listeners.add(locationUpdatesListener);
         if (fusedLocationProviderClient == null)
             startLocationUpdates();
     }
 
     @Override
-    public void removeLocationUpdatesListener(LocationUpdatesListener listener) {
+    public void removeLocationUpdatesListener(ILocationUpdateListener listener) {
         listeners.remove(listener);
         if (listeners.isEmpty()) {
             stopLocationUpdates();
@@ -140,32 +139,5 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
         if (distance < accuracy)
             return 0;
         return distance;
-    }
-
-    /**
-     * Impl it if your wish to receive user location.
-     */
-    public interface LocationUpdatesListener {
-        /**
-         * Notify listener when new location available.
-         * @param location current user location
-         */
-        void onLocationUpdate(LocationData location);
-
-        /**
-         * Called when there is a change in the availability of location data.
-         * @param locationAvailability The current status of location availability.
-         */
-        default void onLocationAvailability(LocationAvailability locationAvailability) {
-
-        }
-
-        /**
-         * You can handle this {@link Exception} only in {@link android.app.Activity} listener.
-         * @param resolvable exception
-         */
-        default void onResolvableException(Exception resolvable) {
-
-        }
     }
 }

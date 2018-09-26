@@ -19,8 +19,8 @@ import java.io.Serializable;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.services.LocationTrackerService;
-import testapp.sliubetskyi.location.core.presenters.MainPresenter;
-import testapp.sliubetskyi.location.core.ui.IMainView;
+import testapp.sliubetskyi.core.presenters.MainPresenter;
+import testapp.sliubetskyi.core.ui.IMainView;
 
 public class MainActivity extends BaseActivity<MainPresenter, IMainView> implements
         IMainView, View.OnClickListener, CompoundButton.OnCheckedChangeListener {

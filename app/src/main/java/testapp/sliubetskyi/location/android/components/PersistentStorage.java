@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import testapp.sliubetskyi.location.android.App;
-import testapp.sliubetskyi.location.core.model.maps.LocationData;
-import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
+import testapp.sliubetskyi.core.model.maps.LocationData;
+import testapp.sliubetskyi.core.model.modules.IPersistentData;
 
 /**
  * Wraps {@link SharedPreferences} object and implements {@link IPersistentData}.

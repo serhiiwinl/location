@@ -13,10 +13,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import testapp.sliubetskyi.location.R;
-import testapp.sliubetskyi.location.core.model.StringsIds;
-import testapp.sliubetskyi.location.core.model.maps.LocationData;
-import testapp.sliubetskyi.location.core.presenters.MapsPresenter;
-import testapp.sliubetskyi.location.core.ui.MapsView;
+import testapp.sliubetskyi.core.model.StringsIds;
+import testapp.sliubetskyi.core.model.maps.LocationData;
+import testapp.sliubetskyi.core.presenters.MapsPresenter;
+import testapp.sliubetskyi.core.ui.MapsView;
 
 public class MapsActivity extends BaseActivity<MapsPresenter, MapsView> implements OnMapReadyCallback, MapsView {
 

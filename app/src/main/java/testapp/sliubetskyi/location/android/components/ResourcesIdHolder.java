@@ -10,8 +10,8 @@ import java.util.Map;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.App;
-import testapp.sliubetskyi.location.core.model.StringsIds;
-import testapp.sliubetskyi.location.core.model.modules.IResourcesProvider;
+import testapp.sliubetskyi.core.model.StringsIds;
+import testapp.sliubetskyi.core.model.modules.IResourcesProvider;
 
 @SuppressWarnings("WeakerAccess")
 final public class ResourcesIdHolder extends ApplicationComponent implements IResourcesProvider {

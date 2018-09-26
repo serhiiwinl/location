@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import testapp.sliubetskyi.location.android.App;
-import testapp.sliubetskyi.location.core.model.modules.IPermissionsManager;
+import testapp.sliubetskyi.core.model.modules.IPermissionsManager;
 
 /**
  * Encapsulates location permissions request and checking logic.

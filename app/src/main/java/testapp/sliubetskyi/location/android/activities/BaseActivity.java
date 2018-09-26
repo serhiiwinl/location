@@ -14,13 +14,13 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
-import testapp.sliubetskyi.location.core.model.ClientContext;
-import testapp.sliubetskyi.location.core.model.StringsIds;
-import testapp.sliubetskyi.location.core.model.modules.IAppState;
-import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
-import testapp.sliubetskyi.location.core.presenters.LocationUpdaterPresenter;
-import testapp.sliubetskyi.location.core.presenters.IPresenterViewComponent;
-import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
+import testapp.sliubetskyi.location.android.ClientContext;
+import testapp.sliubetskyi.core.model.StringsIds;
+import testapp.sliubetskyi.core.model.modules.IAppState;
+import testapp.sliubetskyi.core.model.modules.IPersistentData;
+import testapp.sliubetskyi.core.presenters.LocationUpdaterPresenter;
+import testapp.sliubetskyi.core.presenters.IPresenterViewComponent;
+import testapp.sliubetskyi.core.ui.ILocationUpdaterView;
 
 public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V extends ILocationUpdaterView> extends
         FragmentActivity implements ILocationUpdaterView, IPresenterViewComponent<P, V> {

@@ -7,11 +7,11 @@ import android.support.annotation.Nullable;
 
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.NotificationHelper;
-import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
-import testapp.sliubetskyi.location.core.presenters.IPresenterViewComponent;
-import testapp.sliubetskyi.location.core.presenters.Presenter;
-import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
-import testapp.sliubetskyi.location.core.ui.IView;
+import testapp.sliubetskyi.core.model.modules.IPersistentData;
+import testapp.sliubetskyi.core.presenters.IPresenterViewComponent;
+import testapp.sliubetskyi.core.presenters.Presenter;
+import testapp.sliubetskyi.core.ui.ILocationUpdaterView;
+import testapp.sliubetskyi.core.ui.IView;
 
 public abstract class BaseService<P extends Presenter<V>, V extends IView> extends Service
         implements ILocationUpdaterView, IPresenterViewComponent<P, V> {

@@ -11,8 +11,8 @@ import android.support.annotation.Nullable;
 
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.activities.MainActivity;
-import testapp.sliubetskyi.location.core.presenters.LocationTrackerPresenter;
-import testapp.sliubetskyi.location.core.ui.ILocationTrackerView;
+import testapp.sliubetskyi.core.presenters.LocationTrackerPresenter;
+import testapp.sliubetskyi.core.ui.ILocationTrackerView;
 
 /**
  * Starts user location tracking in background and calculates user tracked distance.
