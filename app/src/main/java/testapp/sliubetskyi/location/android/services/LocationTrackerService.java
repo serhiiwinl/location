@@ -63,7 +63,7 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
     }
 
     @Override
-    public void targetDistanceAchieved(float targetDistance) {
+    public void targetDistanceAchieved(long targetDistance) {
         getNotificationHelper()
                 .showNotificationAtNotificationBar(this, getString(R.string.app_name),
                         R.drawable.notification_icon,

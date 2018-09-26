@@ -27,6 +27,8 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
     }
 
     public void restartDistanceTracking(long newTargetDistance) {
+        if (newTargetDistance == getPersistentStorage().getTargetDistance())
+            return;
         startLocationTracking();
         targetDistance = newTargetDistance;
         trackedDistance = 0;
@@ -42,7 +44,7 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
             if (targetDistance <= trackedDistance) {
                 getPersistentStorage().setTargetDistance(0);
                 stopLocationTracking();
-                runViewAction(view -> view.targetDistanceAchieved(targetDistance));
+                runViewAction(view -> view.targetDistanceAchieved((long)targetDistance));
             }
         }
         prevLocation = location;

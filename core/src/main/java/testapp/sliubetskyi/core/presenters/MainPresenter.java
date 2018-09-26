@@ -2,6 +2,7 @@ package testapp.sliubetskyi.core.presenters;
 
 import testapp.sliubetskyi.core.model.modules.IClientContext;
 import testapp.sliubetskyi.core.ui.IMainView;
+import testapp.sliubetskyi.core.utils.Strings;
 
 public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     public MainPresenter(IClientContext clientContext) {
@@ -21,8 +22,7 @@ public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     @Override
     public void enableLocationTracking(boolean isChecked) {
         super.enableLocationTracking(isChecked);
-        runViewAction(view -> view.updateUI(isChecked,
-                getAppState().isPermissionsBlockedForever(), getPersistentStorage().getTargetDistance()));
+        updateViewState(isChecked);
     }
 
     /**
@@ -35,11 +35,14 @@ public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     }
 
     public void saveTargetDistance(String inputText) {
-        if (inputText != null && !inputText.equalsIgnoreCase("")) {
-            long targetDistance = Long.parseLong(inputText);
-            getPersistentStorage().setTargetDistance(targetDistance);
-        }
+        long targetDistance = Strings.isNullOrEmpty(inputText) ? 0 : Long.parseLong(inputText);
+        getPersistentStorage().setTargetDistance(targetDistance);
+        updateViewState(getAppState().isLocationTrackingAllowed());
     }
 
+    private void updateViewState(boolean isChecked) {
+        runViewAction(view -> view.updateUI(isChecked,
+                getAppState().isPermissionsBlockedForever(), getPersistentStorage().getTargetDistance()));
+    }
 
 }

@@ -61,8 +61,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         distanceInputField = findViewById(R.id.distance_input_field);
         distanceInputField.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (distanceInputField.getText() != null)
-                    presenter.saveTargetDistance(distanceInputField.getText().toString());
+                String targetDistanceText = distanceInputField.getText() == null ? "" : distanceInputField.getText().toString();
+                presenter.saveTargetDistance(targetDistanceText);
             }
             return false;
         });
