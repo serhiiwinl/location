@@ -17,21 +17,15 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
     @Override
     public void onViewBound(ILocationTrackerView view) {
         super.onViewBound(view);
-        getPersistentStorage().setServiceWorking(true);
-    }
-
-    @Override
-    public void onViewUnbound(ILocationTrackerView view) {
-        getPersistentStorage().setServiceWorking(false);
-        super.onViewUnbound(view);
+        targetDistance = getPersistentStorage().getTargetDistance();
     }
 
     public void restartDistanceTracking(long newTargetDistance) {
         if (newTargetDistance == getPersistentStorage().getTargetDistance())
             return;
         startLocationTracking();
-        targetDistance = newTargetDistance;
         trackedDistance = 0;
+        targetDistance = newTargetDistance;
         getPersistentStorage().setTargetDistance(newTargetDistance);
     }
 
@@ -42,9 +36,9 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
 
             //if target distance is achieved - stop tracking and show congrats notification.
             if (targetDistance <= trackedDistance) {
-                getPersistentStorage().setTargetDistance(0);
                 stopLocationTracking();
                 runViewAction(view -> view.targetDistanceAchieved((long)targetDistance));
+                getPersistentStorage().setTargetDistance(0);
             }
         }
         prevLocation = location;

@@ -74,24 +74,28 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
 
     @Override
     public void onResolvableException(Exception resolvable) {
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable(MainActivity.ENABLE_LOCATION_REQUEST, resolvable);
-//        PendingIntent pendingIntent = getPendingIntent(bundle);
-//        getNotificationHelper()
-//                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
-//                        R.drawable.notification_icon,
-//                        "location tracking not allowed without GPS or WI-FI, LTE",
-//                        pendingIntent, TARGET_ACHIEVED_NOTIFICATION_ID);
+        System.out.println("onResolvableException");
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(MainActivity.RESTART_LOCATION_UPDATES_REQUEST, true);
+        PendingIntent pendingIntent = getPendingIntent(true);
+        getNotificationHelper()
+                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
+                        R.drawable.notification_icon,
+                        "location tracking not allowed without GPS or WI-FI, LTE",
+                        pendingIntent, TARGET_ACHIEVED_NOTIFICATION_ID);
     }
 
     @Override
     public void askLocationPermissions() {
-//        PendingIntent pendingIntent = getPendingIntent();
-//        getNotificationHelper()
-//                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
-//                        R.drawable.notification_icon,
-//                        "location tracking not allowed without permissions",
-//                        pendingIntent, TARGET_ACHIEVED_NOTIFICATION_ID);
+        System.out.println("askLocationPermissions");
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(MainActivity.RESTART_LOCATION_UPDATES_REQUEST, true);
+        PendingIntent pendingIntent = getPendingIntent(true);
+        getNotificationHelper()
+                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
+                        R.drawable.notification_icon,
+                        "location tracking not allowed without permissions",
+                        pendingIntent, TARGET_ACHIEVED_NOTIFICATION_ID);
     }
 
     /**
@@ -114,14 +118,17 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
         stopSelf();
     }
 
-    private PendingIntent getPendingIntent(Bundle bundle) {
+    private PendingIntent getPendingIntent(boolean restartConnectionUpdates) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        if (bundle != null)
-            notificationIntent.putExtras(bundle);
-        return PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        int flag = 0;
+        if (restartConnectionUpdates) {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT;
+            notificationIntent.putExtra(MainActivity.RESTART_LOCATION_UPDATES_REQUEST, true);
+        }
+        return PendingIntent.getActivity(this, 0, notificationIntent, flag);
     }
 
     private PendingIntent getPendingIntent() {
-        return getPendingIntent(null);
+        return getPendingIntent(false);
     }
 }

@@ -1,6 +1,8 @@
 package testapp.sliubetskyi.location.android.activities;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -129,6 +131,17 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
 
     IAppState getAppState() {
         return getApp().getClientContext().getAppState();
+    }
+
+    boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager == null) return false;
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

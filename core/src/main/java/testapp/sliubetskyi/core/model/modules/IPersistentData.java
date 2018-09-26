@@ -16,7 +16,4 @@ public interface IPersistentData {
     void setPermissionsBlockedForever(boolean permissionsBlockedForever);
     void setTargetDistance(long targetDistance);
     long getTargetDistance();
-
-    boolean isServiceWorking();
-    void setServiceWorking(boolean isWorking);
 }

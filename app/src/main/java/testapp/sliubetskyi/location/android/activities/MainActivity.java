@@ -15,12 +15,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import java.io.Serializable;
-
-import testapp.sliubetskyi.location.R;
-import testapp.sliubetskyi.location.android.services.LocationTrackerService;
 import testapp.sliubetskyi.core.presenters.MainPresenter;
 import testapp.sliubetskyi.core.ui.IMainView;
+import testapp.sliubetskyi.location.R;
+import testapp.sliubetskyi.location.android.services.LocationTrackerService;
 
 public class MainActivity extends BaseActivity<MainPresenter, IMainView> implements
         IMainView, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -33,7 +31,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private boolean isServiceBound;
     private LocationTrackerService locationTrackerService;
 
-    public static final String ENABLE_LOCATION_REQUEST = "enable_location_request";
+    public static final String RESTART_LOCATION_UPDATES_REQUEST = "restart_location_updates_request";
 
     @Override
     public MainPresenter createPresenter() {
@@ -79,20 +77,17 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     private void handleIntent(Intent intent) {
         if (intent == null)
             return;
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            Serializable serializable = extras.getSerializable(ENABLE_LOCATION_REQUEST);
-            if (serializable != null)
-                onResolvableException((Exception) serializable);
-        }
+        boolean isNeedToRestartConnectionUpdates = intent.getBooleanExtra(RESTART_LOCATION_UPDATES_REQUEST,
+                false);
+        if (isNeedToRestartConnectionUpdates)
+            presenter.enableLocationTracking(getPersistentStorage().isUserAllowedTracking());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (!isServiceBound && getAppState().isServiceWorking()) {
+        if (!isServiceBound && isServiceRunning(LocationTrackerService.class)) {
             bindService(getServiceIntent(), connection, BIND_AUTO_CREATE);
-            isServiceBound = false;
         }
     }
 
