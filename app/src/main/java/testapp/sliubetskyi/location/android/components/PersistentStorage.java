@@ -19,8 +19,10 @@ public class PersistentStorage extends ApplicationComponent implements IPersiste
 
     private static final String USER_ALLOWED_TRACKING_KEY = "user allowed tracking";
     private static final String USER_BLOCK_PERMISSIONS_FOREVER_KEY = "user block permissions forever";
-    private static final String USER_CAMERA_ZOOM_LEVEL = "user camera zoom level";
+    private static final String USER_CAMERA_ZOOM_LEVEL_KEY = "user camera zoom level";
     private static final String USER_TARGET_DISTANCE_KEY = "user target distance key";
+
+    private static final String IS_LOCATION_TRACKER_SERVICE_WORKING_KEY = "is location tracker service working";
 
     //Sidney coordinates
     private static final int DEFAULT_USER_LAT_COORDINATE = -34;
@@ -60,12 +62,12 @@ public class PersistentStorage extends ApplicationComponent implements IPersiste
 
     @Override
     public float getUserCameraZoomValue() {
-        return sharedPref.getFloat(USER_CAMERA_ZOOM_LEVEL, DEFAULT_USER_MAPS_CAMERA_ZOOM_LEVEL);
+        return sharedPref.getFloat(USER_CAMERA_ZOOM_LEVEL_KEY, DEFAULT_USER_MAPS_CAMERA_ZOOM_LEVEL);
     }
 
     @Override
     public void setUserCameraZoomValue(float zoomLevel) {
-        sharedPref.edit().putFloat(USER_CAMERA_ZOOM_LEVEL, zoomLevel).apply();
+        sharedPref.edit().putFloat(USER_CAMERA_ZOOM_LEVEL_KEY, zoomLevel).apply();
     }
 
     @Override
@@ -81,6 +83,16 @@ public class PersistentStorage extends ApplicationComponent implements IPersiste
     @Override
     public long getTargetDistance() {
         return sharedPref.getLong(USER_TARGET_DISTANCE_KEY, 0);
+    }
+
+    @Override
+    public boolean isServiceWorking() {
+        return sharedPref.getBoolean(IS_LOCATION_TRACKER_SERVICE_WORKING_KEY, false);
+    }
+
+    @Override
+    public void setServiceWorking(boolean isWorking) {
+        sharedPref.edit().putBoolean(IS_LOCATION_TRACKER_SERVICE_WORKING_KEY, isWorking).apply();
     }
 
     @Override

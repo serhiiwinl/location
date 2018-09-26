@@ -27,4 +27,9 @@ public class AppState implements IAppState {
     public boolean isPermissionsBlockedForever() {
         return persistentData.isPermissionsBlockedForever() && !permissions.isLocationPermissionsAllowed();
     }
+
+    @Override
+    public boolean isServiceWorking() {
+        return persistentData.isServiceWorking();
+    }
 }

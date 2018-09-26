@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -31,7 +32,6 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
     private boolean isServiceBound;
     private LocationTrackerService locationTrackerService;
-    private long targetDistance;
 
     public static final String ENABLE_LOCATION_REQUEST = "enable_location_request";
 
@@ -50,21 +50,30 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         showCurrentLocationButton = findViewById(R.id.show_current_location);
         distanceTrackerButton = findViewById(R.id.start_distance_tracking);
         showCurrentLocationButton.setOnClickListener(this);
         distanceTrackerButton.setOnClickListener(this);
         allowLocationTrackingCheckBox = findViewById(R.id.allow_location_tracking_checkbox);
         allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
-        distanceInputField = findViewById(R.id.distance_input_field);
 
-        targetDistance = getPersistentStorage().getTargetDistance();
-        if (targetDistance > 0)
-            distanceInputField.setText(String.valueOf(targetDistance));
-        else
-            distanceInputField.setText("");
+        distanceInputField = findViewById(R.id.distance_input_field);
+        distanceInputField.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (distanceInputField.getText() != null)
+                    presenter.saveTargetDistance(distanceInputField.getText().toString());
+            }
+            return false;
+        });
 
         handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
@@ -79,9 +88,12 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
+    protected void onStart() {
+        super.onStart();
+        if (!isServiceBound && getAppState().isServiceWorking()) {
+            bindService(getServiceIntent(), connection, BIND_AUTO_CREATE);
+            isServiceBound = false;
+        }
     }
 
     @Override
@@ -95,11 +107,9 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
     @Override
     protected void onDestroy() {
+        connection = null;
+        locationTrackerService = null;
         super.onDestroy();
-        if (connection != null) {
-            unbindService(connection);
-            isServiceBound = false;
-        }
     }
 
     @Override
@@ -108,11 +118,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         if (id == R.id.show_current_location) {
             presenter.openMaps();
         } else if (id == R.id.start_distance_tracking) {
-            if (distanceInputField.getText() != null) {
-                String inputText = distanceInputField.getText().toString();
-                if (!inputText.equalsIgnoreCase(""))
-                    presenter.startDistanceTracking(Long.parseLong(inputText));
-            }
+            if (distanceInputField.getText() != null)
+                presenter.startDistanceTracking();
         }
     }
 
@@ -129,7 +136,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     }
 
     @Override
-    public void updateTrackingSettings(boolean isTrackingAllowed, boolean isPermissionsBlockedForever) {
+    public void updateUI(boolean isTrackingAllowed, boolean isPermissionsBlockedForever, long targetDistance) {
         allowLocationTrackingCheckBox.setOnCheckedChangeListener(null);
         allowLocationTrackingCheckBox.setEnabled(!isPermissionsBlockedForever);
         allowLocationTrackingCheckBox.setChecked(isTrackingAllowed);
@@ -138,6 +145,10 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         String openMapsButtonString = isTrackingAllowed ? getString(R.string.show_current_location) : getString(R.string.open_maps);
         showCurrentLocationButton.setText(openMapsButtonString);
         distanceTrackerButton.setEnabled(isTrackingAllowed && targetDistance > 0);
+
+        String targetDistanceText = targetDistance > 0 ? String.valueOf(targetDistance) : "";
+        distanceInputField.setText(targetDistanceText);
+
         if (isServiceBound && !isTrackingAllowed) {
             isServiceBound = false;
             unbindService(connection);
@@ -152,7 +163,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         if (isServiceBound) {
             locationTrackerService.restartDistanceTracking(distance);
         } else {
-            Intent intent = new Intent(this, LocationTrackerService.class);
+            Intent intent = getServiceIntent();
             startService(intent);
             bindService(intent, connection, Context.BIND_AUTO_CREATE);
         }
@@ -172,6 +183,11 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             isServiceBound = false;
+            locationTrackerService = null;
         }
     };
+
+    Intent getServiceIntent() {
+        return new Intent(this, LocationTrackerService.class);
+    }
 }

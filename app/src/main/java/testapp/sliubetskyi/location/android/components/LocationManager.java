@@ -131,6 +131,17 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
         return locationData;
     }
 
+    @Override
+    public float distanceBetween(LocationData locationStart, LocationData locationEnd) {
+        float[] results = new float[3];
+        Location.distanceBetween(locationStart.lat, locationStart.lng, locationEnd.lat, locationEnd.lng, results);
+        float accuracy = locationStart.accuracy > locationEnd.accuracy ? locationStart.accuracy : locationEnd.accuracy;
+        float distance = results[0];
+        if (distance < accuracy)
+            return 0;
+        return distance;
+    }
+
     /**
      * Impl it if your wish to receive user location.
      */

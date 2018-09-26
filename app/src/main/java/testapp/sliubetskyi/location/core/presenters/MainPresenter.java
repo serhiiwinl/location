@@ -12,7 +12,8 @@ public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
 
     @Override
     public void onViewBound(@NonNull IMainView view) {
-        view.updateTrackingSettings(getAppState().isLocationTrackingAllowed(), getAppState().isPermissionsBlockedForever());
+        view.updateUI(getAppState().isLocationTrackingAllowed(),
+                getAppState().isPermissionsBlockedForever(), getPersistentStorage().getTargetDistance());
     }
 
     public void openMaps() {
@@ -22,17 +23,24 @@ public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     @Override
     public void enableLocationTracking(boolean isChecked) {
         super.enableLocationTracking(isChecked);
-        runViewAction(view -> view.updateTrackingSettings(isChecked, getAppState().isPermissionsBlockedForever()));
+        runViewAction(view -> view.updateUI(isChecked,
+                getAppState().isPermissionsBlockedForever(), getPersistentStorage().getTargetDistance()));
     }
 
     /**
      * Start foreground service for user distance tracking.
-     * @param distance user target distance in meters.
      */
-    public void startDistanceTracking(long distance) {
-        getPersistentStorage().setTargetDistance(distance);
-        if (distance > 0)
-            runViewAction(view -> view.openDistanceTrackingService(distance));
+    public void startDistanceTracking() {
+        long targetDistance = getPersistentStorage().getTargetDistance();
+        if (targetDistance > 0)
+            runViewAction(view -> view.openDistanceTrackingService(targetDistance));
+    }
+
+    public void saveTargetDistance(String inputText) {
+        if (inputText != null && !inputText.equalsIgnoreCase("")) {
+            long targetDistance = Long.parseLong(inputText);
+            getPersistentStorage().setTargetDistance(targetDistance);
+        }
     }
 
 

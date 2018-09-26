@@ -16,6 +16,7 @@ import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
 import testapp.sliubetskyi.location.core.model.ClientContext;
 import testapp.sliubetskyi.location.core.model.StringsIds;
+import testapp.sliubetskyi.location.core.model.modules.IAppState;
 import testapp.sliubetskyi.location.core.model.modules.IPersistentData;
 import testapp.sliubetskyi.location.core.presenters.LocationUpdaterPresenter;
 import testapp.sliubetskyi.location.core.presenters.IPresenterViewComponent;
@@ -124,6 +125,10 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
 
     IPersistentData getPersistentStorage() {
         return getClientContext().getPersistentStorage();
+    }
+
+    IAppState getAppState() {
+        return getApp().getClientContext().getAppState();
     }
 
     /**

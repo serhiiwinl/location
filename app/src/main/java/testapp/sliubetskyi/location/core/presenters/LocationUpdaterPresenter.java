@@ -14,7 +14,7 @@ import testapp.sliubetskyi.location.core.ui.ILocationUpdaterView;
 public class LocationUpdaterPresenter<V extends ILocationUpdaterView> extends Presenter<V> implements
         LocationManager.LocationUpdatesListener {
 
-    public LocationUpdaterPresenter(ClientContext clientContext) {
+    LocationUpdaterPresenter(ClientContext clientContext) {
         super(clientContext);
     }
 
@@ -49,7 +49,7 @@ public class LocationUpdaterPresenter<V extends ILocationUpdaterView> extends Pr
             stopLocationTracking();
     }
 
-    private void startLocationTracking() {
+    void startLocationTracking() {
         if (clientContext.getPersistentStorage().isUserAllowedTracking()) {
             if (getPermissionsManager().isLocationPermissionsAllowed()) {
                 getLocationManager().addLocationUpdatesListener(this);
@@ -59,7 +59,7 @@ public class LocationUpdaterPresenter<V extends ILocationUpdaterView> extends Pr
         }
     }
 
-    private void stopLocationTracking() {
+    void stopLocationTracking() {
         getLocationManager().removeLocationUpdatesListener(this);
         clientContext.getPersistentStorage().setUserLocation(getLocationManager().getCurrentLocation());
     }
