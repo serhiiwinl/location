@@ -42,11 +42,11 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
 
     /**
      * CTOR
-     * @param context app context
+     * @param app application
      * @param locationData last saved location data
      */
-    public LocationManager(final App context, LocationData locationData) {
-        super(context);
+    LocationManager(final App app, LocationData locationData) {
+        super(app);
         this.locationData = locationData;
     }
 

@@ -31,8 +31,8 @@ public class AppState extends ApplicationComponent implements IAppState {
     }
 
     @Override
-    public void appIsVisible(boolean inForeground) {
-        this.isAppVisible = inForeground;
+    public void appIsVisible(boolean isVisible) {
+        this.isAppVisible = isVisible;
     }
 
     @Override

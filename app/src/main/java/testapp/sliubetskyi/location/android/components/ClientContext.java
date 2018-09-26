@@ -7,11 +7,6 @@ import testapp.sliubetskyi.core.model.modules.IPermissionsManager;
 import testapp.sliubetskyi.core.model.modules.IPersistentData;
 import testapp.sliubetskyi.core.model.modules.IResourcesProvider;
 import testapp.sliubetskyi.location.android.App;
-import testapp.sliubetskyi.location.android.components.AppState;
-import testapp.sliubetskyi.location.android.components.LocationManager;
-import testapp.sliubetskyi.location.android.components.PermissionManager;
-import testapp.sliubetskyi.location.android.components.PersistentStorage;
-import testapp.sliubetskyi.location.android.components.ResourcesIdHolder;
 
 /**
  * Links all modules and components together and provide access for all needed apis.

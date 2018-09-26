@@ -64,7 +64,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     /**
-     * Needs only for prevent {@link ClientContext} init not from {@link App}.
+     * Needs only for prevent {@link ClientContext} creating not from {@link App}.
      */
     public class ClientContextKey {
         private ClientContextKey() {}

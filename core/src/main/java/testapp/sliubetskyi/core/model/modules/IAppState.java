@@ -4,7 +4,7 @@ public interface IAppState {
     boolean isLocationTrackingAllowed();
     boolean isPermissionsBlockedForever();
 
-    void appIsVisible(boolean inForeground);
+    void appIsVisible(boolean isVisible);
 
     boolean appIsVisible();
 }
