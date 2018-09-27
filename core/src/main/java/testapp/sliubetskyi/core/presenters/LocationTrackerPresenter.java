@@ -10,7 +10,7 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
     private LocationData prevLocation;
     private float trackedDistance;
     private float targetDistance;
-    //TODO:need to check it more correct
+    //TODO:need to calibrate it more correct
     public final static int MAX_ALLOWED_ACCURACY = 150;
 
     public LocationTrackerPresenter(IClientContext clientContext) {
