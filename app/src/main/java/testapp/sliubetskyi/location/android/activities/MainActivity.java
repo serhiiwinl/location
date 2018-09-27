@@ -17,6 +17,7 @@ import android.widget.EditText;
 
 import testapp.sliubetskyi.core.presenters.MainPresenter;
 import testapp.sliubetskyi.core.ui.IMainView;
+import testapp.sliubetskyi.core.utils.Strings;
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.services.LocationTrackerService;
 
@@ -57,9 +58,11 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
         distanceInputField = findViewById(R.id.distance_input_field);
         distanceInputField.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                String targetDistanceText = distanceInputField.getText() == null ? "" : distanceInputField.getText().toString();
-                presenter.startDistanceTracking(targetDistanceText);
+            if (actionId == EditorInfo.IME_ACTION_DONE && distanceInputField.getText() != null) {
+                if (!Strings.isNullOrEmpty(distanceInputField.getText().toString())) {
+                    String targetDistanceText = distanceInputField.getText() == null ? "" : distanceInputField.getText().toString();
+                    presenter.startDistanceTracking(targetDistanceText);
+                }
             }
             return false;
         });
@@ -141,9 +144,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
         String openMapsButtonString = isTrackingAllowed ? getString(R.string.show_current_location) : getString(R.string.open_maps);
         showCurrentLocationButton.setText(openMapsButtonString);
-        distanceInputField.setEnabled(isTrackingAllowed && targetDistance > 0);
-//        String targetDistanceText = targetDistance > 0 ? String.valueOf(targetDistance) : "";
-//        distanceInputField.setText(targetDistanceText);
+        distanceInputField.setEnabled(isTrackingAllowed && targetDistance >= 0);
 
         if (isServiceBound && !isTrackingAllowed) {
             isServiceBound = false;

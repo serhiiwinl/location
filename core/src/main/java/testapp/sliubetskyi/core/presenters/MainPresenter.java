@@ -2,7 +2,6 @@ package testapp.sliubetskyi.core.presenters;
 
 import testapp.sliubetskyi.core.model.modules.IClientContext;
 import testapp.sliubetskyi.core.ui.IMainView;
-import testapp.sliubetskyi.core.utils.Strings;
 
 public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     public MainPresenter(IClientContext clientContext) {
