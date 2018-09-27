@@ -18,8 +18,9 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import testapp.sliubetskyi.core.model.maps.LocationData;
 import testapp.sliubetskyi.core.model.modules.ILocationManager;
@@ -38,7 +39,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private final Set<ILocationUpdateListener> listeners = new HashSet<>();
+    private final Set<ILocationUpdateListener> listeners;
     private LocationData locationData;
 
     /**
@@ -48,6 +49,8 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
      */
     LocationManager(final App app, LocationData locationData) {
         super(app);
+        ConcurrentHashMap<ILocationUpdateListener, Boolean> map = new ConcurrentHashMap<>();
+        this.listeners = Collections.newSetFromMap(map);
         this.locationData = locationData;
     }
 
@@ -79,10 +82,8 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                             return;
                         Location lastLocation = locationResult.getLastLocation();
                         locationData = new LocationData(lastLocation.getLatitude(), lastLocation.getLongitude(), lastLocation.getAccuracy());
-                        synchronized (listeners) {
-                            for (ILocationUpdateListener listener : listeners)
-                                listener.onLocationUpdate(locationData);
-                        }
+                        for (ILocationUpdateListener listener : listeners)
+                            listener.onLocationUpdate(locationData);
                     }
 
                     @SuppressWarnings("deprecation")
@@ -101,10 +102,8 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
                                 isLocationAvailable = false;
                             }
                             if (!isLocationAvailable) {
-                                synchronized (listeners) {
-                                    for (ILocationUpdateListener listener : listeners)
-                                        listener.onLocationNotAvailable();
-                                }
+                                for (ILocationUpdateListener listener : listeners)
+                                    listener.onLocationNotAvailable();
                             }
                         }
                     }
@@ -115,10 +114,8 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
         });
         //force user to enable GPS or WI-FI
         task.addOnFailureListener(e -> {
-            synchronized (listeners) {
-                for (ILocationUpdateListener listener : listeners)
-                    listener.onResolvableException(e);
-            }
+            for (ILocationUpdateListener listener : listeners)
+                listener.onResolvableException(e);
         });
     }
 
@@ -134,20 +131,16 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
 
     @Override
     public void addLocationUpdatesListener(ILocationUpdateListener locationUpdatesListener) {
-        synchronized (listeners) {
-            listeners.add(locationUpdatesListener);
-        }
+        listeners.add(locationUpdatesListener);
         if (fusedLocationProviderClient == null)
             startLocationUpdates();
     }
 
     @Override
     public void removeLocationUpdatesListener(ILocationUpdateListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-            if (listeners.isEmpty())
-                stopLocationUpdates();
-        }
+        listeners.remove(listener);
+        if (listeners.isEmpty())
+            stopLocationUpdates();
     }
 
     @Override
@@ -163,12 +156,14 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
 
     @Override
     public float distanceBetween(LocationData locationStart, LocationData locationEnd) {
+//        System.out.println("location start " + locationEnd);
+//        System.out.println("location end " + locationEnd);
+//        System.out.println(locationEnd);
         float[] results = new float[3];
         Location.distanceBetween(locationStart.lat, locationStart.lng, locationEnd.lat, locationEnd.lng, results);
         float accuracy = locationStart.accuracy > locationEnd.accuracy ? locationStart.accuracy : locationEnd.accuracy;
-        float distance = results[0];
-        if (distance < accuracy)
-            return 0;
-        return distance;
+//        System.out.println("location accuracy " + accuracy);
+//        System.out.println("location result " + results[0]);
+        return results[0] < accuracy ? 0 : results[0];
     }
 }

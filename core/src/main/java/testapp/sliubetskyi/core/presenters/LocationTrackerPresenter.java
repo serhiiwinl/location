@@ -30,7 +30,11 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
     @Override
     public void onLocationUpdate(LocationData location) {
         if (prevLocation != null) {
+//
+//            System.out.println("location target distance " + targetDistance);
+//            System.out.println("location trackedDistance before " + trackedDistance);
             trackedDistance += getLocationManager().distanceBetween(prevLocation, location);
+//            System.out.println("location trackedDistance after " + trackedDistance);
 
             //if target distance is achieved - stop tracking and show congrats notification.
             if (targetDistance <= trackedDistance) {
