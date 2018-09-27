@@ -1,1 +1,3 @@
-# location tracker app based on MVP architecture
+The location tracker app.
+Created based on MVP architecture.
+Location updates get from FusedLocationProviderClient.
