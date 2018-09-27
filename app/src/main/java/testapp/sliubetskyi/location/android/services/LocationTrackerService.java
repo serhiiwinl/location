@@ -140,9 +140,8 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
 
     private PendingIntent getPendingIntent(int errorCode) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        int flag = errorCode > 0 ? PendingIntent.FLAG_UPDATE_CURRENT : 0;
         notificationIntent.putExtra(LOCATION_PERMISSION_ISSUE_KEY, errorCode);
-        return PendingIntent.getActivity(this, 0, notificationIntent, flag);
+        return PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent getPendingIntent() {
