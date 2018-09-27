@@ -27,6 +27,7 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
     private static final int TARGET_ACHIEVED_NOTIFICATION_ID = 1001;
     private static final int PERMISSIONS_NOT_ALLOWED_NOTIFICATION_ID = 1002;
     private static final int LOCATION_NOT_ALLOWED_NOTIFICATION_ID = 1003;
+    private static final int LOCATION_ACCURACY_IS_TOO_BIG_NOTIFICATION_ID = 1004;
 
     @NonNull
     @Override
@@ -74,6 +75,16 @@ public class LocationTrackerService extends BaseService<LocationTrackerPresenter
                         R.drawable.notification_icon,
                         getString(R.string.target_distance_achieved, targetDistance),
                         getPendingIntent(), TARGET_ACHIEVED_NOTIFICATION_ID);
+        stopWork();
+    }
+
+    @Override
+    public void locationAccuracyIsToBig() {
+        getNotificationHelper()
+                .showNotificationAtNotificationBar(this, getString(R.string.app_name),
+                        R.drawable.notification_icon,
+                        getString(R.string.location_accuracy_is_too_big),
+                        getPendingIntent(), LOCATION_ACCURACY_IS_TOO_BIG_NOTIFICATION_ID);
         stopWork();
     }
 

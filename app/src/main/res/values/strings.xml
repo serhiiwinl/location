@@ -7,6 +7,7 @@
     <string name="allow_location_tracking">Allow location tracking</string>
     <string name="input_distance_field_hint">Enter your target distance in meters</string>
     <string name="target_distance_achieved">Target distance in %d meters is achieved!!!</string>
+    <string name="location_accuracy_is_too_big">Normal location tracking not allowed. Please enable GPS, LTE or WI-FI</string>
 
     <string name="location_unknown">Your location is unknown</string>
     <string name="current_unknown">Your are here</string>

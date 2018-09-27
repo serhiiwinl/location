@@ -156,14 +156,14 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
 
     @Override
     public float distanceBetween(LocationData locationStart, LocationData locationEnd) {
-//        System.out.println("location start " + locationEnd);
-//        System.out.println("location end " + locationEnd);
-//        System.out.println(locationEnd);
         float[] results = new float[3];
         Location.distanceBetween(locationStart.lat, locationStart.lng, locationEnd.lat, locationEnd.lng, results);
-        float accuracy = locationStart.accuracy > locationEnd.accuracy ? locationStart.accuracy : locationEnd.accuracy;
-//        System.out.println("location accuracy " + accuracy);
-//        System.out.println("location result " + results[0]);
-        return results[0] < accuracy ? 0 : results[0];
+        return results[0] < locationEnd.accuracy ? 0 : results[0];
+    }
+
+    @Override
+    public float distanceBetweenWithAccuracy(LocationData locationStart, LocationData locationEnd) {
+        float result = distanceBetween(locationStart, locationEnd);
+        return result < locationEnd.accuracy ? 0 : result;
     }
 }

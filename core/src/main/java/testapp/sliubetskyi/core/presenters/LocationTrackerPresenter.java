@@ -10,6 +10,7 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
     private LocationData prevLocation;
     private float trackedDistance;
     private float targetDistance;
+    public final static int MAX_ALLOWED_ACCURACY = 50;
 
     public LocationTrackerPresenter(IClientContext clientContext) {
         super(clientContext);
@@ -30,17 +31,18 @@ public class LocationTrackerPresenter extends LocationUpdaterPresenter<ILocation
     @Override
     public void onLocationUpdate(LocationData location) {
         if (prevLocation != null) {
-//
-//            System.out.println("location target distance " + targetDistance);
-//            System.out.println("location trackedDistance before " + trackedDistance);
-            trackedDistance += getLocationManager().distanceBetween(prevLocation, location);
-//            System.out.println("location trackedDistance after " + trackedDistance);
-
-            //if target distance is achieved - stop tracking and show congrats notification.
-            if (targetDistance <= trackedDistance) {
+            if (location.accuracy > MAX_ALLOWED_ACCURACY) {
                 stopLocationTracking();
-                runViewAction(view -> view.targetDistanceAchieved((long)targetDistance));
-                getPersistentStorage().setTargetDistance(0);
+                runViewAction(ILocationTrackerView::locationAccuracyIsToBig);
+                return;
+            } else {
+                trackedDistance += getLocationManager().distanceBetweenWithAccuracy(prevLocation, location);
+                //if target distance is achieved - stop tracking and show congrats notification.
+                if (targetDistance <= trackedDistance) {
+                    stopLocationTracking();
+                    runViewAction(view -> view.targetDistanceAchieved((long)targetDistance));
+                    getPersistentStorage().setTargetDistance(0);
+                }
             }
         }
         prevLocation = location;

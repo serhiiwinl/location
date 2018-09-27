@@ -25,7 +25,6 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
     private CheckBox allowLocationTrackingCheckBox;
     private EditText distanceInputField;
-    private Button distanceTrackerButton;
     private Button showCurrentLocationButton;
 
     private boolean isServiceBound;
@@ -52,9 +51,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         setContentView(R.layout.activity_main);
 
         showCurrentLocationButton = findViewById(R.id.show_current_location);
-        distanceTrackerButton = findViewById(R.id.start_distance_tracking);
         showCurrentLocationButton.setOnClickListener(this);
-        distanceTrackerButton.setOnClickListener(this);
         allowLocationTrackingCheckBox = findViewById(R.id.allow_location_tracking_checkbox);
         allowLocationTrackingCheckBox.setOnCheckedChangeListener(this);
 
@@ -62,7 +59,7 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
         distanceInputField.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 String targetDistanceText = distanceInputField.getText() == null ? "" : distanceInputField.getText().toString();
-                presenter.saveTargetDistance(targetDistanceText);
+                presenter.startDistanceTracking(targetDistanceText);
             }
             return false;
         });
@@ -119,12 +116,8 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.show_current_location) {
+        if (id == R.id.show_current_location)
             presenter.openMaps();
-        } else if (id == R.id.start_distance_tracking) {
-            if (distanceInputField.getText() != null)
-                presenter.startDistanceTracking();
-        }
     }
 
     @Override
@@ -148,12 +141,9 @@ public class MainActivity extends BaseActivity<MainPresenter, IMainView> impleme
 
         String openMapsButtonString = isTrackingAllowed ? getString(R.string.show_current_location) : getString(R.string.open_maps);
         showCurrentLocationButton.setText(openMapsButtonString);
-        distanceTrackerButton.setEnabled(isTrackingAllowed && targetDistance > 0);
-        String distanceTrackerButtonText = isServiceBound ? getString(R.string.change_distance_tracking) : getString(R.string.start_distance_tracking);
-        distanceTrackerButton.setText(distanceTrackerButtonText);
-
-        String targetDistanceText = targetDistance > 0 ? String.valueOf(targetDistance) : "";
-        distanceInputField.setText(targetDistanceText);
+        distanceInputField.setEnabled(isTrackingAllowed && targetDistance > 0);
+//        String targetDistanceText = targetDistance > 0 ? String.valueOf(targetDistance) : "";
+//        distanceInputField.setText(targetDistanceText);
 
         if (isServiceBound && !isTrackingAllowed) {
             isServiceBound = false;

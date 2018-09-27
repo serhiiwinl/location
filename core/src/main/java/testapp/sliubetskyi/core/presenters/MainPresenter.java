@@ -28,17 +28,17 @@ public class MainPresenter extends LocationUpdaterPresenter<IMainView> {
     }
 
     /**
-     * Start foreground service for user distance tracking.
+     * Starts foreground service for user distance tracking.
+     * @param targetDistance new user target distance
      */
-    public void startDistanceTracking() {
-        long targetDistance = getPersistentStorage().getTargetDistance();
-        if (targetDistance > 0)
-            runViewAction(view -> view.openDistanceTrackingService(targetDistance));
-    }
+    public void startDistanceTracking(String targetDistance) {
+        long prevTargetDistance = getPersistentStorage().getTargetDistance();
+        long newTargetDistance = Long.valueOf(targetDistance);
 
-    public void saveTargetDistance(String inputText) {
-        long targetDistance = Strings.isNullOrEmpty(inputText) ? 0 : Long.parseLong(inputText);
-        getPersistentStorage().setTargetDistance(targetDistance);
+        if (newTargetDistance != prevTargetDistance) {
+            getPersistentStorage().setTargetDistance(newTargetDistance);
+            runViewAction(view -> view.openDistanceTrackingService(newTargetDistance));
+        }
         updateViewState(getAppState().isLocationTrackingAllowed());
     }
 
