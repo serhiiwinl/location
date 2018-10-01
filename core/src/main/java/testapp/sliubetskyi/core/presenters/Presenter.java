@@ -52,11 +52,28 @@ public class Presenter<V extends IView> implements IPresenter<V> {
         return isViewBound;
     }
 
+    /**
+     * Just executes a {@link Runnable} object if view is bounded.
+     * @param runnable executable runnable
+     * @return true if action executed
+     */
     protected boolean runViewAction(ViewActionRunnable<V> runnable) {
         V view = view();
         if (view != null)
             executeRunnable(runnable, view);
         return view != null && isViewBound;
+    }
+
+    /**
+     * Executes a {@link ViewActionRunnable} object on UI tread if view is bounded.
+     * @param runnable executable runnable
+     * @return true if action executed
+     */
+    protected boolean runViewUIAction(final ViewActionRunnable<V> runnable) {
+        final V view = view();
+        if (view != null)
+            view.postUIThread(() -> executeRunnable(runnable, view));
+        return view != null;
     }
 
     /**

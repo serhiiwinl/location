@@ -1,6 +1,6 @@
 package testapp.sliubetskyi.core.ui;
 
-public interface IMainView extends IBaseActivityView, ILocationUpdaterView {
+public interface IMainView extends IBaseView, ILocationUpdaterView {
     void openMapsActivity();
 
     /**

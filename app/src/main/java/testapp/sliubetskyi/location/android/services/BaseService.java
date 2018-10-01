@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import testapp.sliubetskyi.core.model.modules.IAppState;
+import testapp.sliubetskyi.core.model.modules.IUITreadExecutor;
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.NotificationHelper;
 import testapp.sliubetskyi.core.model.modules.IPersistentData;
@@ -50,7 +51,26 @@ public abstract class BaseService<P extends Presenter<V>, V extends IView> exten
         return getApp().getClientContext().getAppState();
     }
 
+    IUITreadExecutor getUITreadExecutor() {
+        return getApp().getClientContext().getUITreadExecutor();
+    }
+
     NotificationHelper getNotificationHelper() {
         return getApp().getNotificationHelper();
+    }
+
+    @Override
+    public void postUIThread(Runnable runnable) {
+        getUITreadExecutor().postUIThread(runnable);
+    }
+
+    @Override
+    public void postUIThread(Runnable runnable, long delay) {
+        getUITreadExecutor().postUIThread(runnable, delay);
+    }
+
+    @Override
+    public void cancelUIThreadAction(Runnable runnable) {
+        getUITreadExecutor().cancelUIThreadAction(runnable);
     }
 }

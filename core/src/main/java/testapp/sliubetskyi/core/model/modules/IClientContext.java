@@ -9,4 +9,5 @@ public interface IClientContext {
     IAppState getAppState();
     IPermissionsManager getPermissionsManager();
     IResourcesProvider getResProvider();
+    IUITreadExecutor getUITreadExecutor();
 }

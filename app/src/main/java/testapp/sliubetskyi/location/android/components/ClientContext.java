@@ -6,6 +6,7 @@ import testapp.sliubetskyi.core.model.modules.ILocationManager;
 import testapp.sliubetskyi.core.model.modules.IPermissionsManager;
 import testapp.sliubetskyi.core.model.modules.IPersistentData;
 import testapp.sliubetskyi.core.model.modules.IResourcesProvider;
+import testapp.sliubetskyi.core.model.modules.IUITreadExecutor;
 import testapp.sliubetskyi.location.android.App;
 
 /**
@@ -18,6 +19,7 @@ public final class ClientContext implements IClientContext {
     private final ILocationManager locationManager;
     private final IPermissionsManager permissionsManager;
     private final IResourcesProvider resourcesProvider;
+    private final IUITreadExecutor uiTreadExecutor;
 
     @SuppressWarnings("unused")
     public ClientContext(App.ClientContextKey clientContextKey, App app) {
@@ -25,6 +27,7 @@ public final class ClientContext implements IClientContext {
         permissionsManager = new PermissionManager(app);
         locationManager = new LocationManager(app, persistentStorage.getUserLocation());
         resourcesProvider = new ResourcesIdHolder(app);
+        uiTreadExecutor = new UITreadExecutor(app);
         appState = new AppState(app, persistentStorage, permissionsManager);
     }
 
@@ -51,5 +54,10 @@ public final class ClientContext implements IClientContext {
     @Override
     public IResourcesProvider getResProvider() {
         return resourcesProvider;
+    }
+
+    @Override
+    public IUITreadExecutor getUITreadExecutor() {
+        return uiTreadExecutor;
     }
 }

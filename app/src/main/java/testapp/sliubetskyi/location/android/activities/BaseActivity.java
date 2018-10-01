@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 
+import testapp.sliubetskyi.core.model.modules.IUITreadExecutor;
 import testapp.sliubetskyi.location.R;
 import testapp.sliubetskyi.location.android.App;
 import testapp.sliubetskyi.location.android.components.PermissionManager;
@@ -138,6 +139,10 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
         return getApp().getClientContext().getAppState();
     }
 
+    IUITreadExecutor getUITreadExecutor() {
+        return getApp().getClientContext().getUITreadExecutor();
+    }
+
     /**
      * Helps to retrieve string from stringFromEnum value.
      * @param string string type
@@ -162,5 +167,20 @@ public abstract class BaseActivity<P extends LocationUpdaterPresenter<V>, V exte
             }
         }
         return false;
+    }
+
+    @Override
+    public void postUIThread(Runnable runnable) {
+        getUITreadExecutor().postUIThread(runnable);
+    }
+
+    @Override
+    public void postUIThread(Runnable runnable, long delay) {
+        getUITreadExecutor().postUIThread(runnable, delay);
+    }
+
+    @Override
+    public void cancelUIThreadAction(Runnable runnable) {
+        getUITreadExecutor().cancelUIThreadAction(runnable);
     }
 }
