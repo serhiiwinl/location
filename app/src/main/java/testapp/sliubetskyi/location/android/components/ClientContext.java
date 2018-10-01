@@ -2,7 +2,7 @@ package testapp.sliubetskyi.location.android.components;
 
 import testapp.sliubetskyi.core.model.modules.IAppState;
 import testapp.sliubetskyi.core.model.modules.IClientContext;
-import testapp.sliubetskyi.core.model.modules.ILocationManager;
+import testapp.sliubetskyi.core.model.modules.location.ILocationManager;
 import testapp.sliubetskyi.core.model.modules.IPermissionsManager;
 import testapp.sliubetskyi.core.model.modules.IPersistentData;
 import testapp.sliubetskyi.core.model.modules.IResourcesProvider;

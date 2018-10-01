@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import testapp.sliubetskyi.core.model.maps.LocationData;
-import testapp.sliubetskyi.core.model.modules.ILocationManager;
-import testapp.sliubetskyi.core.model.modules.ILocationUpdateListener;
+import testapp.sliubetskyi.core.model.modules.location.ILocationManager;
+import testapp.sliubetskyi.core.model.modules.location.ILocationUpdateListener;
 import testapp.sliubetskyi.location.android.App;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;

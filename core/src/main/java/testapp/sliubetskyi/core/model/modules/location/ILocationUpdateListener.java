@@ -1,4 +1,4 @@
-package testapp.sliubetskyi.core.model.modules;
+package testapp.sliubetskyi.core.model.modules.location;
 
 import testapp.sliubetskyi.core.model.maps.LocationData;
 

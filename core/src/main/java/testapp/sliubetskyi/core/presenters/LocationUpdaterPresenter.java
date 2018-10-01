@@ -2,7 +2,7 @@ package testapp.sliubetskyi.core.presenters;
 
 import testapp.sliubetskyi.core.model.maps.LocationData;
 import testapp.sliubetskyi.core.model.modules.IClientContext;
-import testapp.sliubetskyi.core.model.modules.ILocationUpdateListener;
+import testapp.sliubetskyi.core.model.modules.location.ILocationUpdateListener;
 import testapp.sliubetskyi.core.ui.ILocationUpdaterView;
 
 /**
