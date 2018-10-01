@@ -158,7 +158,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
     public float distanceBetween(LocationData locationStart, LocationData locationEnd) {
         float[] results = new float[3];
         Location.distanceBetween(locationStart.lat, locationStart.lng, locationEnd.lat, locationEnd.lng, results);
-        return results[0] < locationEnd.accuracy ? 0 : results[0];
+        return results[0];
     }
 
     @Override
