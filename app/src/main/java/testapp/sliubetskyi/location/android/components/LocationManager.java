@@ -49,8 +49,7 @@ public class LocationManager extends ApplicationComponent implements ILocationMa
      */
     LocationManager(final App app, LocationData locationData) {
         super(app);
-        ConcurrentHashMap<ILocationUpdateListener, Boolean> map = new ConcurrentHashMap<>();
-        this.listeners = Collections.newSetFromMap(map);
+        this.listeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.locationData = locationData;
     }
 
